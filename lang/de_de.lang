@@ -1,0 +1,31 @@
+# addon: nv_modulepreview de_de
+
+nv_modulepreview = Modulvorschau
+nv_modulepreview_key = nvModulePreview
+nv_modulepreview_config = Konfiguration
+nv_modulepreview_modules = Module
+nv_modulepreview_categories = Kategorien
+nv_modulepreview_help = Hilfe
+
+nv_modulepreview_categories_add = Kategorie hinzufügen
+nv_modulepreview_categories_edit = Kategorie bearbeiten
+nv_modulepreview_categories_title = Titel
+nv_modulepreview_categories_modules = Module
+nv_modulepreview_categories_description = Beschreibung
+nv_modulepreview_categories_prio = Prioriät
+nv_modulepreview_categories_status = Status
+nv_modulepreview_categories_status_active = Aktiv
+nv_modulepreview_categories_status_inactive = Inaktiv
+
+nv_modulepreview_module_id = Modul ID
+nv_modulepreview_module_name = Modul Name
+nv_modulepreview_thumbnail = Vorschaubild
+nv_modulepreview_description = Beschreibung
+nv_modulepreview_module_edit = Modulvorschau bearbeiten
+
+nv_modulepreview_config_items_per_row = Module pro Zeile ausgeben
+nv_modulepreview_config_overwrite_module_select = Modulauswahl auch für das System (ohne Gridblock) anwenden
+nv_modulepreview_config_show_only_gridblock = Bei Modulauswahl (System) nur Gridblock anzeigen
+
+nv_modulepreview_mod_choose_modul = - Inhaltsblock wählen -
+nv_modulepreview_mod_copy_insertmodul = Inhaltsblock &raquo;###modname###&laquo; mit der ID ####modid### einfügen

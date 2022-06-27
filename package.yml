@@ -1,0 +1,21 @@
+# Alle hier gesetzten Werte können über `$addon->getProperty($key)` abgefragt werden
+
+package: nv_modulepreview # Pflichtfeld
+version: '0.8-beta' # Pflichtfeld
+author: novinet GmbH & Co KG
+supportpage: https://novinet.de
+
+pages:
+    modules/nv_modulepreview:
+        title: translate:nv_modulepreview_key
+        perm: 'nv_modulepreview[]'
+        pjax: false
+        subpages:
+            modules: { title: 'translate:nv_modulepreview_modules' }
+            categories: { title: 'translate:nv_modulepreview_categories' }
+            config: { title: 'translate:nv_modulepreview_config' }
+            help: { title: 'translate:nv_modulepreview_help', subPath: README.md }
+
+requires:
+    packages:
+        ui_tools/selectize: '>=0.2.0'
