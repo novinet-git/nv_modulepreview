@@ -24,7 +24,8 @@ nv_modulepreview_description = Beschreibung
 nv_modulepreview_module_edit = Modulvorschau bearbeiten
 
 nv_modulepreview_config_items_per_row = Module pro Zeile ausgeben
-nv_modulepreview_config_overwrite_module_select = Modulauswahl auch für das System (ohne Gridblock) anwenden
+nv_modulepreview_config_show_search = Suche anzeigen
+nv_modulepreview_config_overwrite_gridblock = Modulauswahl auch für Gridblock anwenden
 nv_modulepreview_config_show_only_gridblock = Bei Modulauswahl (System) nur Gridblock anzeigen
 
 nv_modulepreview_mod_choose_modul = - Inhaltsblock wählen -

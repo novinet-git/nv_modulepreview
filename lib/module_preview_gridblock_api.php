@@ -7,10 +7,14 @@ class rex_api_module_preview_get_modules_gridblock extends rex_api_function
 
         $aParams = $_GET["epparams"];
         $aModules = $_GET["modules"];
-        $moduleList = '<div class="container"><div class="form-group">';
-        $moduleList .= '<label class="control-label" for="module-preview-search"><input class="form-control" name="module-preview-search" type="text" id="module-preview-search" value="" placeholder="suchbegriff eingeben" /></label>';
-        $moduleList .= '</div></div>';
+        
+        $moduleList = '';
 
+        if (rex_config::get('nv_modulepreview', 'show_search')) {
+            $moduleList = '<div class="container"><div class="form-group">';
+            $moduleList .= '<label class="control-label" for="module-preview-search"><input class="form-control" name="module-preview-search" type="text" id="module-preview-search" value="" placeholder="suchbegriff eingeben" /></label>';
+            $moduleList .= '</div></div>';
+        }
 
         $moduleList .= '<div class="container">';
         $moduleList .= '<ul class="module-list gridblock-moduleselector" role="menu" style="background:white" data-colid="' . $aParams["colid"] . '" data-uid="' . $aParams["uid"] . '">';

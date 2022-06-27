@@ -39,6 +39,7 @@ $sql->setQuery("INSERT INTO " . \rex::getTablePrefix() . "media_manager_type_eff
 
 if (!$this->hasConfig()) {
     $this->setConfig([
-        "items_pre_row" => "2"
+        "show_search" => "1",
+        "overwrite_gridblock" => "1",
     ]);
 }

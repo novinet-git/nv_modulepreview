@@ -14,9 +14,13 @@ class rex_api_module_preview_get_modules extends rex_api_function
         $output .= $modulePreview->getModules();
 */
 
-        $moduleList = '<div class="container"><div class="form-group">';
-        $moduleList .= '<label class="control-label" for="module-preview-search"><input class="form-control" name="module-preview-search" type="text" id="module-preview-search" value="" placeholder="suchbegriff eingeben" /></label>';
-        $moduleList .= '</div></div>';
+
+        $moduleList = '';
+        if (rex_config::get('nv_modulepreview', 'show_search')) {
+            $moduleList .= '<div class="container"><div class="form-group">';
+            $moduleList .= '<label class="control-label" for="module-preview-search"><input class="form-control" name="module-preview-search" type="text" id="module-preview-search" value="" placeholder="suchbegriff eingeben" /></label>';
+            $moduleList .= '</div></div>';
+        }
 
 
         $moduleList .= '<div class="container">';
@@ -36,24 +40,23 @@ class rex_api_module_preview_get_modules extends rex_api_function
             'function' => 'add',
         ]);
 
-        if(nvModulepreview::hasClipboardContents()) {
+        if (nvModulepreview::hasClipboardContents()) {
             $clipBoardContents = nvModulepreview::getClipboardContents();
             $sliceDetails = nvModulepreview::getSliceDetails($clipBoardContents['slice_id'], $clipBoardContents['clang']);
             $context->setParam('source_slice_id', $clipBoardContents['slice_id']);
 
-            if($sliceDetails['article_id']) {
+            if ($sliceDetails['article_id']) {
                 $moduleList .= '<li class="column large">';
-                    $moduleList .= '<a href="'.$context->getUrl(['module_id' => $sliceDetails['module_id']]).'" data-href="'.$context->getUrl(['module_id' => $sliceDetails['module_id']]).'" class="module" data-name="'.$sliceDetails['module_id'].'.jpg">';
-                        $moduleList .= '<div class="header">';
-                            if($clipBoardContents['action'] === 'copy') {
-                                $moduleList .= '<i class="fa fa-clipboard" aria-hidden="true" style="margin-right: 5px;"></i>';
-                            }
-                            elseif($clipBoardContents['action'] === 'cut') {
-                                $moduleList .= '<i class="fa fa-scissors" aria-hidden="true" style="margin-right: 5px;"></i>';
-                            }
-                            $moduleList .= '<span>'.rex_addon::get('bloecks')->i18n('insert_slice', $sliceDetails['name'], $clipBoardContents['slice_id'], rex_article::get($sliceDetails['article_id'])->getName()).'</span>';
-                        $moduleList .= '</div>';
-                    $moduleList .= '</a>';
+                $moduleList .= '<a href="' . $context->getUrl(['module_id' => $sliceDetails['module_id']]) . '" data-href="' . $context->getUrl(['module_id' => $sliceDetails['module_id']]) . '" class="module" data-name="' . $sliceDetails['module_id'] . '.jpg">';
+                $moduleList .= '<div class="header">';
+                if ($clipBoardContents['action'] === 'copy') {
+                    $moduleList .= '<i class="fa fa-clipboard" aria-hidden="true" style="margin-right: 5px;"></i>';
+                } elseif ($clipBoardContents['action'] === 'cut') {
+                    $moduleList .= '<i class="fa fa-scissors" aria-hidden="true" style="margin-right: 5px;"></i>';
+                }
+                $moduleList .= '<span>' . rex_addon::get('bloecks')->i18n('insert_slice', $sliceDetails['name'], $clipBoardContents['slice_id'], rex_article::get($sliceDetails['article_id'])->getName()) . '</span>';
+                $moduleList .= '</div>';
+                $moduleList .= '</a>';
                 $moduleList .= '</li>';
             }
         }
@@ -67,7 +70,11 @@ class rex_api_module_preview_get_modules extends rex_api_function
 
         $module = rex_sql::factory();
         $aModules = array();
-        $modules = $module->getArray('select * from ' . rex::getTablePrefix() . 'module order by name');
+        if (rex_config::get('nv_modulepreview', 'show_only_gridblock')) {
+            $modules = $module->getArray('select * from ' . rex::getTablePrefix() . 'module where name = "01 - Gridblock" order by name');
+        } else {
+            $modules = $module->getArray('select * from ' . rex::getTablePrefix() . 'module order by name');
+        }
 
         foreach ($modules as $aItem) {
             $iId = $aItem["id"];

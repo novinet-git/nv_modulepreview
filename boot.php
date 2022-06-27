@@ -50,7 +50,7 @@ if ('index.php?page=content/edit' == rex_url::currentBackendPage()) {
     });
 }
 
-if (rex_addon::get("gridblock")->isAvailable()) {
+if (rex_addon::get("gridblock")->isAvailable() && $this->getConfig('overwrite_gridblock')) {
     rex_extension::register('GRIDBLOCK_MODULESELECTOR_ADD', array('nvModulepreview', 'runExtenstionPointGridblock'), rex_extension::LATE);
 }
 
