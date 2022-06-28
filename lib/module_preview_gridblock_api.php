@@ -15,7 +15,7 @@ class rex_api_module_preview_get_modules_gridblock extends rex_api_function
 
         $moduleList .= '<div class="nv-modal-header"><div class="nv-modal-header-label">'.rex_i18n::msg('nv_modulepreview_modules_choose').'</div>';
 
-        if (rex_config::get('nv_modulepreview', 'show_search') && !rex_config::get('nv_modulepreview', 'show_only_gridblock')) {
+        if (rex_config::get('nv_modulepreview', 'show_search')) {
             $moduleList .= '<div class="form-group">';
             $moduleList .= '<label class="control-label" for="module-preview-search"><input class="form-control" name="module-preview-search" type="text" id="module-preview-search" value="" placeholder="'.rex_i18n::msg('nv_modulepreview_modules_start_searching').'" /></label>';
             $moduleList .= '</div>';
