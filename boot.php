@@ -6,9 +6,11 @@ if (!rex::isBackend() or !rex::getUser()) {
 if (file_exists($this->getAssetsPath("css/novinet.css"))) {
     rex_view::addCssFile($this->getAssetsUrl("css/novinet.css"));
 }
-if (file_exists($this->getAssetsPath("css/styles.css"))) {
-    rex_view::addCssFile($this->getAssetsUrl("css/styles.css"));
+
+if (file_exists($this->getAssetsPath("css/nv_modulepreview.css"))) {
+    rex_view::addCssFile($this->getAssetsUrl("css/nv_modulepreview.css"));
 }
+
 if (file_exists($this->getAssetsPath("js/script.js"))) {
     rex_view::addJSFile($this->getAssetsUrl('js/script.js'));
 }

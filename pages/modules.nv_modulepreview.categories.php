@@ -73,7 +73,7 @@ if ($func == 'edit' || $func == 'add') {
     }
 
     $oDb = rex_sql::factory();
-    $oDb->setQuery("SELECT * FROM " . rex::getTable("module") . " WHERE name != '01 - Gridblock' ORDER BY name ASC");
+    $oDb->setQuery("SELECT * FROM " . rex::getTable("module") . " ORDER BY name ASC");
     foreach ($oDb as $oItem) {
         if (rex::getUser()->getComplexPerm('modules')->hasPerm($oItem->getValue("id")) && !in_array($oItem->getValue("id"), $aUsedModules)) {
             $select->addOption($oItem->getValue("name"), $oItem->getValue("id"));

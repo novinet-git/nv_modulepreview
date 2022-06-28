@@ -19,6 +19,18 @@ $select = $field->getSelect();
 $select->addOption("Inaktiv", "0");
 $select->addOption("Aktiv", "1");
 
+$field = $form->addSelectField('hide_images', $value = null, ['class' => 'form-control selectpicker']);
+$field->setLabel($this->i18n('nv_modulepreview_config_hide_images'));
+$select = $field->getSelect();
+$select->addOption("Inaktiv", "0");
+$select->addOption("Aktiv", "1");
+
+$field = $form->addSelectField('show_as_list', $value = null, ['class' => 'form-control selectpicker']);
+$field->setLabel($this->i18n('nv_modulepreview_config_show_as_list'));
+$select = $field->getSelect();
+$select->addOption("Inaktiv", "0");
+$select->addOption("Aktiv", "1");
+
 if (rex_addon::get('gridblock')->isAvailable()) {
     $field = $form->addSelectField('overwrite_gridblock', $value = null, ['class' => 'form-control selectpicker']);
     $field->setLabel($this->i18n('nv_modulepreview_config_overwrite_gridblock'));

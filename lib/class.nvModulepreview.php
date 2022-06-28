@@ -45,10 +45,10 @@
                 'modules' => $aModules,
                 'epparams' => $aParams,
             ];
-            rex_set_session("nv_modulepreview_".$aParams["colid"],$aSessionParams);
-            
+            rex_set_session("nv_modulepreview_" . $aParams["colid"], $aSessionParams);
+
             $sHtml = '<div class="dropdown btn-block">';
-            $sHtml .= '<a class="btn btn-default btn-block btn-choosegridmodul show-module-preview" data-url="' . rex_url::backendPage("content/edit", $aUrlParams+rex_api_module_preview_get_modules_gridblock::getUrlParams()) . '">';
+            $sHtml .= '<a class="btn btn-default btn-block btn-choosegridmodul show-module-preview" data-url="' . rex_url::backendPage("content/edit", $aUrlParams + rex_api_module_preview_get_modules_gridblock::getUrlParams()) . '">';
             $sHtml .= '<strong>Inhaltsblock hinzufügen</strong> ';
             $sHtml .= '<i class="fa fa-plus-circle"></i>';
             $sHtml .= '</a>';
@@ -168,11 +168,13 @@
     private static function getPreviewMarkup($aData)
     {
         if ($aData["type"] == "category") {
-            $sHtml = '<li class="col-md-12 nv-category" style="background-color:#efefef;padding:10px" id="' . $aData["key"] . '"><strong>' . $aData["label"] . '</strong>';
-            if ($aData["description"] != "") {
-                $sHtml .= '<br><span class="text-muted"><small>' . $aData["description"] . '</small></span>';
+            $sHtml = '<li class="column large" id="' . $aData["key"] . '"><div class="nv-category"><strong>' . $aData["label"] . '</strong>';
+            if (isset($aData["description"])) {
+                if ($aData["description"] != "") {
+                    $sHtml .= '<br><span class="text-muted"><small>' . $aData["description"] . '</small></span>';
+                }
             }
-            $sHtml .= '</li>';
+            $sHtml .= '</div></li>';
             return $sHtml;
         }
 
@@ -199,7 +201,7 @@
 
             $oAddon = self::getAddon();
             $iItemsPerRow = 12 / ($oAddon->getConfig("items_per_row") ?: "2");
-            
+
 
             $sDataCategory = "";
             if (isset($aData["category"])) {
@@ -211,19 +213,33 @@
                 $sDataGridblock = $aData["module"]["gridblock"];
             }
 
-            $sHtml = '<li class="column"><a style="position:relative" class="module" data-gridblock="' . $sDataGridblock . '" data-category="' . $sDataCategory . '" data-modid="' . $iModuleId . '" data-modname="' . $sModName . '"';
-            if ($aData["module"]["href"] != "") {
-                $sHtml .= 'href="' . $aData["module"]["href"] . '" data-href="' . $aData["module"]["href"] . '" ';
+            $sShowAsList = "";
+            if (rex_config::get('nv_modulepreview', 'show_as_list')) {
+                $sShowAsList = "large nv-show-as-list";
+            }
+
+
+            $sHtml = '<li class="column ' . $sShowAsList . '"><a style="position:relative" class="module" data-gridblock="' . $sDataGridblock . '" data-category="' . $sDataCategory . '" data-modid="' . $iModuleId . '" data-modname="' . $sModName . '"';
+            if (isset($aData["module"]["href"])) {
+                if ($aData["module"]["href"] != "") {
+                    $sHtml .= 'href="' . $aData["module"]["href"] . '" data-href="' . $aData["module"]["href"] . '" ';
+                }
             }
             $sHtml .= '>';
             $sHtml .= '<div class="header">' . $sModName . '</div>';
 
-            $sHtml .= '<div class="image"><div>';
-            $sHtml .= $thumbnail;
-            $sHtml .= '</div></div>';
+            $sHideImages = "nv-hide-images";
+            if (!rex_config::get('nv_modulepreview', 'hide_images')) {
+                $sHtml .= '<div class="image"><div>';
+                $sHtml .= $thumbnail;
+                $sHtml .= '</div></div>';
+                $sHideImages = "";
+            }
 
             if ($sql->getValue('nv_modulepreview_description')) {
-                $sHtml .= '<div class="description" style="position:absolute;width:100%;padding:5px;background:black;color:white;bottom:0">' . $sql->getValue('nv_modulepreview_description') . '</div>';
+                $sHtml .= '<div class="' . $sHideImages . '">';
+                $sHtml .= '<div class="description ">' . $sql->getValue('nv_modulepreview_description') . '</div>';
+                $sHtml .= '</div>';
             }
 
             $sHtml .= '</a></li>' . PHP_EOL;
@@ -240,22 +256,25 @@
         $ep->setSubject($sSubject);
     }
 
-    public static function hasClipboardContents(): bool {
+    public static function hasClipboardContents(): bool
+    {
         $cookie = self::getClipboardContents();
 
-        if($cookie) {
+        if ($cookie) {
             return true;
         }
 
         return false;
     }
 
-    public static function getClipboardContents() {
+    public static function getClipboardContents()
+    {
         return @json_decode(rex_request::cookie('rex_bloecks_cutncopy', 'string', ''), true);
     }
 
-    public static function getSliceDetails($sliceId, $clangId) {
-        if($sliceId && $clangId) {
+    public static function getSliceDetails($sliceId, $clangId)
+    {
+        if ($sliceId && $clangId) {
             $sql = rex_sql::factory();
             $sql->setQuery('select ' . rex::getTablePrefix() . 'article_slice.article_id, ' . rex::getTablePrefix() . 'article_slice.module_id, ' . rex::getTablePrefix() . 'module.name from ' . rex::getTablePrefix() . 'article_slice left join ' . rex::getTablePrefix() . 'module on ' . rex::getTablePrefix() . 'article_slice.module_id=' . rex::getTablePrefix() . 'module.id where ' . rex::getTablePrefix() . 'article_slice.id=? and ' . rex::getTablePrefix() . 'article_slice.clang_id=?', [$sliceId, $clangId]);
             return $sql->getArray()[0];

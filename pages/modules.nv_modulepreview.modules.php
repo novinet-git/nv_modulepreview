@@ -3,7 +3,7 @@
 if (rex_request('func', 'string') !== "edit") {
 
 
-    $list = rex_list::factory("SELECT id,name,nv_modulepreview_thumbnail,nv_modulepreview_description  FROM " . rex::getTable("module") . " WHERE name != '01 - Gridblock' ORDER BY name ASC");
+    $list = rex_list::factory("SELECT id,name,nv_modulepreview_thumbnail,nv_modulepreview_description  FROM " . rex::getTable("module") . " ORDER BY name ASC");
     #dump($list);
     // Optionen der Liste
     $list->addTableAttribute('class', 'table-hover');
@@ -51,6 +51,7 @@ if (rex_request('func', 'string') === "edit" && rex_request('id', 'int') !== "")
 
     $field = $form->addMediaField('nv_modulepreview_thumbnail');
     $field->setLabel(rex_i18n::msg('nv_modulepreview_thumbnail'));
+    $field->setNotice("16:9 Format, wird skaliert auf 600x338px");
     $field->setTypes('jpg,jpeg,png,gif');
 
     $form->addParam('id', $id);

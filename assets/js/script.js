@@ -119,7 +119,8 @@ function attachModuleEventHandler() {
       $modules.filter(':icontains(' + value + ')').parent().show();
 
       $($modules.filter(':icontains(' + value + ')')).each(function( index ) {
-        $('#'+$(this).attr('data-category')).show();
+        console.log($(this).data('category'));
+        $('#'+$(this).data('category')+' .nv-category').show();
       });
       //$('#'+$modules.filter(':icontains(' + value + ')').attr('data-category')).show();
     }
