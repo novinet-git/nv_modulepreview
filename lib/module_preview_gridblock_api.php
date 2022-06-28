@@ -5,9 +5,12 @@ class rex_api_module_preview_get_modules_gridblock extends rex_api_function
     public function execute()
     {
 
-        $aParams = $_GET["epparams"];
-        $aModules = $_GET["modules"];
-        
+        $iColId = rex_request('colid', 'int');
+        $sUid = rex_request('uid');
+        $aSessionParams = rex_session("nv_modulepreview_".$iColId);
+        rex_unset_session("nv_modulepreview_".$iColId);
+        $aParams = $aSessionParams["epparams"];
+        $aModules = $aSessionParams["modules"];
         $moduleList = '';
 
         if (rex_config::get('nv_modulepreview', 'show_search')) {
@@ -28,7 +31,7 @@ class rex_api_module_preview_get_modules_gridblock extends rex_api_function
             if (rex_article_content_gridblock::checkCopyAvailable($copUID, $copCOLID, $copSLID) && $copMODID > 0 && rex::getUser()->getComplexPerm('modules')->hasPerm($copMODID)) {
                 $module = @$_SESSION['gridAllowedModules'][$copMODID];
 
-                $modName = aFM_maskChar($module['name']);
+                $modName = nvMaskChar($module['name']);
                 $moduleList .= '<li class="column large"><a data-copyid="' . $copUID . '" data-modid="' . $copMODID . '" data-modname="' . $modName . '">';
                 $moduleList .= '<div class="header">';
                 $moduleList .= '<i class="fa fa-clipboard" aria-hidden="true" style="margin-right: 5px;"></i>';

@@ -16,7 +16,7 @@ class rex_api_module_preview_get_modules extends rex_api_function
 
 
         $moduleList = '';
-        if (rex_config::get('nv_modulepreview', 'show_search')) {
+        if (rex_config::get('nv_modulepreview', 'show_search') && !rex_config::get('nv_modulepreview', 'show_only_gridblock')) {
             $moduleList .= '<div class="container"><div class="form-group">';
             $moduleList .= '<label class="control-label" for="module-preview-search"><input class="form-control" name="module-preview-search" type="text" id="module-preview-search" value="" placeholder="suchbegriff eingeben" /></label>';
             $moduleList .= '</div></div>';

@@ -36,12 +36,19 @@
 
         if (isset($aParams["gridblock"])) {
 
-            $params = [
+            $aUrlParams = [
+                "colid" => $aParams["colid"],
+                "uid" => $aParams["uid"]
+            ];
+
+            $aSessionParams = [
                 'modules' => $aModules,
                 'epparams' => $aParams,
             ];
+            rex_set_session("nv_modulepreview_".$aParams["colid"],$aSessionParams);
+            
             $sHtml = '<div class="dropdown btn-block">';
-            $sHtml .= '<a class="btn btn-default btn-block btn-choosegridmodul show-module-preview" data-url="' . rex_url::backendPage("content/edit", $params + rex_api_module_preview_get_modules_gridblock::getUrlParams()) . '">';
+            $sHtml .= '<a class="btn btn-default btn-block btn-choosegridmodul show-module-preview" data-url="' . rex_url::backendPage("content/edit", $aUrlParams+rex_api_module_preview_get_modules_gridblock::getUrlParams()) . '">';
             $sHtml .= '<strong>Inhaltsblock hinzufügen</strong> ';
             $sHtml .= '<i class="fa fa-plus-circle"></i>';
             $sHtml .= '</a>';
@@ -68,7 +75,7 @@
                 if (rex_article_content_gridblock::checkCopyAvailable($copUID, $copCOLID, $copSLID) && $copMODID > 0 && rex::getUser()->getComplexPerm('modules')->hasPerm($copMODID)) {
                     $module = @$_SESSION['gridAllowedModules'][$copMODID];
 
-                    $modName = aFM_maskChar($module['name']);
+                    $modName = nvMaskChar($module['name']);
                     $sHtml .= '<li class="gridblock-cutncopy-insert"><a data-copyid="' . $copUID . '" data-modid="' . $copMODID . '" data-modname="' . $modName . '">' . str_replace(array("###modname###", "###modid###"), array($modName, $copMODID), rex_i18n::rawmsg('nv_modulepreview_mod_copy_insertmodul')) . '</a></li>';
                 }
             }
@@ -172,7 +179,7 @@
         if ($aData["type"] == "module") {
             $iModuleId = $aData["module_id"];
             $aModule = $aData["module"];
-            $sModName = aFM_maskChar($aModule['name']);
+            $sModName = nvMaskChar($aModule['name']);
 
             $sql = rex_sql::factory();
             $sql->setTable(rex::getTable('module'));
@@ -192,9 +199,20 @@
 
             $oAddon = self::getAddon();
             $iItemsPerRow = 12 / ($oAddon->getConfig("items_per_row") ?: "2");
-            $sHtml = '<li class="column"><a style="position:relative" class="module" data-gridblock="' . $aData["module"]["gridblock"] . '" data-category="' . $aData["category"] . '" data-modid="' . $iModuleId . '" data-modname="' . $sModName . '"';
+            
+
+            $sDataCategory = "";
+            if (isset($aData["category"])) {
+                $sDataCategory = $aData["category"];
+            }
+
+            $sDataGridblock = "";
+            if (isset($aData["module"]["gridblock"])) {
+                $sDataGridblock = $aData["module"]["gridblock"];
+            }
+
+            $sHtml = '<li class="column"><a style="position:relative" class="module" data-gridblock="' . $sDataGridblock . '" data-category="' . $sDataCategory . '" data-modid="' . $iModuleId . '" data-modname="' . $sModName . '"';
             if ($aData["module"]["href"] != "") {
-                #$sHtml .= 'onclick="window.location.href = \'' . $aData["module"]["href"] . '\'"';
                 $sHtml .= 'href="' . $aData["module"]["href"] . '" data-href="' . $aData["module"]["href"] . '" ';
             }
             $sHtml .= '>';
@@ -208,7 +226,6 @@
                 $sHtml .= '<div class="description" style="position:absolute;width:100%;padding:5px;background:black;color:white;bottom:0">' . $sql->getValue('nv_modulepreview_description') . '</div>';
             }
 
-            #$sHtml .= '<div class="row" style="padding:10px"><div class="col-md-6">' . $thumbnail . '</div><div class="col-md-6"><strong>' . $sModName . '</strong>' . $description . '</div></div></a></li>' . PHP_EOL;
             $sHtml .= '</a></li>' . PHP_EOL;
             return $sHtml;
         }

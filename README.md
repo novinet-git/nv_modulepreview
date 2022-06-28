@@ -14,7 +14,7 @@ Features
 
 Credits
 -------
-Vielen Dank Daniel Springer und Thorben Jaworr für die Insipration durch ihre Addons
+Vielen Dank Daniel Springer @danspringer und @eaCe für die Insipration durch ihre Addons
 
 Weitere Informationen
 -------

@@ -13,6 +13,16 @@ if (file_exists($this->getAssetsPath("js/script.js"))) {
     rex_view::addJSFile($this->getAssetsUrl('js/script.js'));
 }
 
+if(!rex_plugin::get('ui_tools','selectize')->isAvailable()) {
+    rex_view::addCssFile($this->getAssetsUrl('vendor/selectize/selectize/dist/css/selectize.css'));
+    rex_view::addCssFile($this->getAssetsUrl('vendor/selectize/selectize/dist/css/selectize.bootstrap3.css'));
+    rex_view::addJsFile($this->getAssetsUrl('vendor/selectize/selectize/dist/js/standalone/selectize.min.js'));
+    rex_view::addJsFile($this->getAssetsUrl('vendor/selectize/rex_selectize.js'));
+}
+
+require_once($this->getPath("lib/functions.php"));
+
+
 if ('index.php?page=content/edit' == rex_url::currentBackendPage()) {
 
     $bloecksDragIsInstalled = false;
