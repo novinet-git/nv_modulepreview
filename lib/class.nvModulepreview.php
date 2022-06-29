@@ -61,33 +61,10 @@
             return $sHtml;
         }
 
-        if (isset($aParams["gridblockAlt"])) {
-            $sHtml .= '<div class="dropdown btn-block">';
-            $sHtml .= '<a class="btn btn-default btn-block btn-choosegridmodul dropdown-toggle" data-toggle="dropdown" title="' . rex_i18n::msg('nv_modulepreview_mod_choose_modul') . '"><i class="fa fa-plus"></i>' . rex_i18n::msg('nv_modulepreview_mod_choose_modul') . ' <span class="caret"></span></a>';
-
-            $sHtml .= '<ul class="dropdown-menu btn-block gridblock-moduleselector" role="menu" data-colid="' . $aParams["colid"] . '" data-uid="' . $aParams["uid"] . '">';
-
-            if ($aParams["copiedmodule"]) {
-                $copUID = @$aParams["copiedmodule"]['uid'];
-                $copCOLID = @intval($aParams["copiedmodule"]['colid']);
-                $copSLID = @intval($aParams["copiedmodule"]['sliceid']);
-                $copMODID = @intval($aParams["copiedmodule"]['modid']);
-                if (rex_article_content_gridblock::checkCopyAvailable($copUID, $copCOLID, $copSLID) && $copMODID > 0 && rex::getUser()->getComplexPerm('modules')->hasPerm($copMODID)) {
-                    $module = @$_SESSION['gridAllowedModules'][$copMODID];
-
-                    $modName = nvMaskChar($module['name']);
-                    $sHtml .= '<li class="gridblock-cutncopy-insert"><a data-copyid="' . $copUID . '" data-modid="' . $copMODID . '" data-modname="' . $modName . '">' . str_replace(array("###modname###", "###modid###"), array($modName, $copMODID), rex_i18n::rawmsg('nv_modulepreview_mod_copy_insertmodul')) . '</a></li>';
-                }
-            }
-        }
-
         foreach ($aItems as $aItem) {
             $sHtml .= self::getPreviewMarkup($aItem);
         }
-        if (isset($aParams["gridblockAlt"])) {
-            $sHtml .= '</ul>';
-            $sHtml .= '</div>';
-        }
+       
         return $sHtml;
     }
 
@@ -219,7 +196,7 @@
             }
 
 
-            $sHtml = '<li class="column ' . $sShowAsList . '"><a style="position:relative" class="module" data-gridblock="' . $sDataGridblock . '" data-category="' . $sDataCategory . '" data-modid="' . $iModuleId . '" data-modname="' . $sModName . '"';
+            $sHtml = '<li class="card column ' . $sShowAsList . '"><a style="position:relative" class="module" data-gridblock="' . $sDataGridblock . '" data-category="' . $sDataCategory . '" data-modid="' . $iModuleId . '" data-modname="' . $sModName . '"';
             if (isset($aData["module"]["href"])) {
                 if ($aData["module"]["href"] != "") {
                     $sHtml .= 'href="' . $aData["module"]["href"] . '" data-href="' . $aData["module"]["href"] . '" ';
@@ -279,5 +256,15 @@
             $sql->setQuery('select ' . rex::getTablePrefix() . 'article_slice.article_id, ' . rex::getTablePrefix() . 'article_slice.module_id, ' . rex::getTablePrefix() . 'module.name from ' . rex::getTablePrefix() . 'article_slice left join ' . rex::getTablePrefix() . 'module on ' . rex::getTablePrefix() . 'article_slice.module_id=' . rex::getTablePrefix() . 'module.id where ' . rex::getTablePrefix() . 'article_slice.id=? and ' . rex::getTablePrefix() . 'article_slice.clang_id=?', [$sliceId, $clangId]);
             return $sql->getArray()[0];
         }
+    }
+
+    public static function generateCss()
+    {
+        $oAddon = self::getAddon();
+        $compiler = new rex_scss_compiler();
+        $compiler->setRootDir($oAddon->getPath('scss/'));
+        $compiler->setScssFile([$oAddon->getPath("scss/nv_modulepreview.scss")]);
+        $compiler->setCssFile($oAddon->getAssetsPath('css/nv_modulepreview.css'));
+        $compiler->compile();
     }
 }

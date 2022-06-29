@@ -1,4 +1,4 @@
-# nvModulepreview - Addon für REDAXO 5
+# nvModulePreview - Addon für REDAXO 5
 
 Addon zur schöneren und übersichtlicheren Darstellung der Module in der Modulauswahl.
 

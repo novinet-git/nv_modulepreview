@@ -3,6 +3,7 @@ if (!rex::isBackend() or !rex::getUser()) {
     return;
 }
 
+
 if (file_exists($this->getAssetsPath("css/novinet.css"))) {
     rex_view::addCssFile($this->getAssetsUrl("css/novinet.css"));
 }
@@ -15,7 +16,7 @@ if (file_exists($this->getAssetsPath("js/script.js"))) {
     rex_view::addJSFile($this->getAssetsUrl('js/script.js'));
 }
 
-if(!rex_plugin::get('ui_tools','selectize')->isAvailable()) {
+if (!rex_plugin::get('ui_tools', 'selectize')->isAvailable()) {
     rex_view::addCssFile($this->getAssetsUrl('vendor/selectize/selectize/dist/css/selectize.css'));
     rex_view::addCssFile($this->getAssetsUrl('vendor/selectize/selectize/dist/css/selectize.bootstrap3.css'));
     rex_view::addJsFile($this->getAssetsUrl('vendor/selectize/selectize/dist/js/standalone/selectize.min.js'));
@@ -29,10 +30,10 @@ if ('index.php?page=content/edit' == rex_url::currentBackendPage()) {
 
     $bloecksDragIsInstalled = false;
 
-    if(rex_addon::exists('bloecks')) {
+    if (rex_addon::exists('bloecks')) {
         $addons = rex_addon::getInstalledAddons();
 
-        if(isset($addons['bloecks'])) {
+        if (isset($addons['bloecks'])) {
             $bloecksDragIsInstalled = $addons['bloecks']->getPlugin('dragndrop')->isAvailable();
         }
     }
@@ -48,15 +49,25 @@ if ('index.php?page=content/edit' == rex_url::currentBackendPage()) {
             'clang' => $clang,
             'category_id' => $category_id,
             'article_id' => $article_id,
+            'slice_id' => $ep->getParam('slice_id'),
             'buster' => time()
         ];
 
-        $html = '<div class="btn-block '.($bloecksDragIsInstalled && $ep->getParam('slice_id') !== -1 ? 'bloecks' : '').'">';
-            $html .= '<button class="btn btn-default btn-block show-module-preview" type="button" data-slice="'.$ep->getParam('slice_id').'" data-url="'.rex_url::currentBackendPage($params + rex_api_module_preview_get_modules::getUrlParams()).'">';
-                $html .= '<strong>Block hinzufügen</strong> ';
-                $html .= '<i class="fa fa-plus-circle" aria-hidden="true"></i>';
-            $html .= '</button>';
+        $html = '<div class="btn-block ' . ($bloecksDragIsInstalled && $ep->getParam('slice_id') !== -1 ? 'bloecks' : '') . '">';
+        $html .= '<button class="btn btn-default btn-block show-module-preview" type="button" ';
+        if (rex_addon::get("gridblock")->isAvailable() && $this->getConfig('show_only_gridblock') && !nvModulepreview::hasClipboardContents()) {
+            #$html .= 'data-gridblock="show" ';
+        }
+        $html .= 'data-slice="' . $ep->getParam('slice_id') . '" data-url="' . rex_url::currentBackendPage($params + rex_api_module_preview_get_modules::getUrlParams()) . '">';
+        $html .= '<strong>Block hinzufügen</strong> ';
+        $html .= '<i class="fa fa-plus-circle" aria-hidden="true"></i>';
+        $html .= '</button>';
         $html .= '</div>';
+        $html .= '<script>';
+        $html .= "$('body').trigger('rex:ready', [$('body')]);
+    $(document).trigger('ready');
+    $(document).trigger('pjax:success');";
+        $html .= '</script>';
 
         $ep->setSubject($html);
     });
@@ -68,14 +79,16 @@ if (rex_addon::get("gridblock")->isAvailable() && $this->getConfig('overwrite_gr
 
 rex_extension::register('OUTPUT_FILTER', static function (rex_extension_point $ep) {
     $output = '<div id="module-preview" data-pjax-container="#rex-js-page-main-content"><div class="close"><span aria-hidden="true">&times;</span></div>';
-        $output .= '<div class="inner"></div>';
+    $output .= '<div class="inner"></div>';
     $output .= '</div>';
 
     if ($output) {
-        $ep->setSubject(str_ireplace(
+        $ep->setSubject(
+            str_ireplace(
                 ['</body>'],
                 [$output . '</body>'],
-                $ep->getSubject())
+                $ep->getSubject()
+            )
         );
     }
 });

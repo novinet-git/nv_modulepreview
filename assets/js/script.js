@@ -64,13 +64,15 @@ function showModulePreview(elem) {
       $modulePreview.find('.inner').html(html);
 
       previewActive = true;
-      $modulePreview.fadeIn();
-      $body.addClass('module-preview');
-      $body.css('height', 'auto');
-      $html.css('overflow', 'hidden');
-      $body.addClass('modal-open');
       $modules = $modulePreview.find('a.module');
-      $modules.parent().show();
+      if ($modules.length > "1" || $('.nv-copy').length) {
+        $modulePreview.fadeIn();
+        $body.addClass('module-preview');
+        $body.css('height', 'auto');
+        $html.css('overflow', 'hidden');
+        $body.addClass('modal-open');
+        $modules.parent().show();
+      }
 
       for (let i = 0; i < $modules.length; i++) {
         if (!$modules.eq(i).data('gridblock')) {
@@ -78,8 +80,11 @@ function showModulePreview(elem) {
           $modules.eq(i).attr('href', href + '&slice_id=' + slice + '#' + slicePosition);
         }
       }
-
       attachModuleEventHandler();
+
+      if ($modules.length == "1" && !$('.nv-copy').length) {
+        window.location.href=$modules.eq(0).attr('href');
+      }
     }
   })
   .fail(function (jqXHR, textStatus, errorThrown) {
@@ -119,10 +124,8 @@ function attachModuleEventHandler() {
       $modules.filter(':icontains(' + value + ')').parent().show();
 
       $($modules.filter(':icontains(' + value + ')')).each(function( index ) {
-        console.log($(this).data('category'));
         $('#'+$(this).data('category')+' .nv-category').show();
       });
-      //$('#'+$modules.filter(':icontains(' + value + ')').attr('data-category')).show();
     }
     else {
       $modules.parent().show();
