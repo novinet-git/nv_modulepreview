@@ -3,6 +3,10 @@ if (!rex::isBackend() or !rex::getUser()) {
     return;
 }
 
+if ($this->getConfig('generatefiles')) {
+    nvModulepreview::generateCss();
+    $this->removeConfig('generatefiles');
+}
 
 if (file_exists($this->getAssetsPath("css/novinet.css"))) {
     rex_view::addCssFile($this->getAssetsUrl("css/novinet.css"));

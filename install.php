@@ -44,4 +44,4 @@ if (!$this->hasConfig()) {
     ]);
 }
 
-nvModulepreview::generateCss();
+$this->setConfig('generatefiles',true);

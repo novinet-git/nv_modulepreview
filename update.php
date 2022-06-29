@@ -1,1 +1,1 @@
-<?php nvModulepreview::generateCss();
+<?php $this->setConfig('generatefiles',true);
