@@ -2,7 +2,6 @@
 if (!rex::isBackend() or !rex::getUser()) {
     return;
 }
-
 if ($this->getConfig('generatefiles')) {
     nvModulepreview::generateCss();
     $this->removeConfig('generatefiles');
@@ -67,11 +66,11 @@ if ('index.php?page=content/edit' == rex_url::currentBackendPage()) {
         $html .= '<i class="fa fa-plus-circle" aria-hidden="true"></i>';
         $html .= '</button>';
         $html .= '</div>';
-        $html .= '<script>';
+        /*$html .= '<script>';
         $html .= "$('body').trigger('rex:ready', [$('body')]);
     $(document).trigger('ready');
     $(document).trigger('pjax:success');";
-        $html .= '</script>';
+        $html .= '</script>';*/
 
         $ep->setSubject($html);
     });
