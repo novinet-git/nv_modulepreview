@@ -53,6 +53,7 @@ if ('index.php?page=content/edit' == rex_url::currentBackendPage()) {
             'category_id' => $category_id,
             'article_id' => $article_id,
             'slice_id' => $ep->getParam('slice_id'),
+            'ctype' => $ep->getParam('ctype'),
             'buster' => time()
         ];
 

@@ -1,7 +1,7 @@
 # Alle hier gesetzten Werte können über `$addon->getProperty($key)` abgefragt werden
 
 package: nv_modulepreview # Pflichtfeld
-version: '1.0.2-beta' # Pflichtfeld
+version: '1.0.3-beta' # Pflichtfeld
 author: novinet GmbH & Co KG
 supportpage: https://novinet.de
 
