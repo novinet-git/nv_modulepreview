@@ -25,7 +25,7 @@
                 'ctype' => $ep->getParam('ctype')
             ]),
             'attributes' => [
-                'class' => ['btn-copy nv-collections'],
+                'class' => ['btn-default nv-collections'],
                 'title' => 'Als Collection speichern',
                 'data-pjax-no-history' => 'true',
             ],
@@ -159,7 +159,12 @@
         }
 
 
-        $oCollection = rex_yform_manager_dataset::get($iCollectionId, rex::getTable("nv_modulepreview_collections"));
+        $oCollection = rex_sql::factory();
+        $oCollection->setQuery("SELECT * FROM " . rex::getTable("nv_modulepreview_collections") . " WHERE id = :id Limit 1",["id" => $iCollectionId]);
+        if (!$oCollection->getRows()) {
+            return;
+        }
+
         $aProperties = json_decode($oCollection->getValue("properties"), 1);
         $_NEW_REQUEST = [
             'save' => '1',

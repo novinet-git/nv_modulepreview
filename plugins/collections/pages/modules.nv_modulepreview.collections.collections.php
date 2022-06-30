@@ -5,9 +5,10 @@ $id = rex_request('id', 'integer');
 
 if ($id) {
 
-    $oTmp = rex_yform_manager_dataset::get($id, rex::getTable("nv_modulepreview_collections"));
-    if (!$oTmp->id) {
-        echo rex_view::error("Kategorie nicht gefunden");
+    $oDb = rex_sql::factory();
+    $oDb->setQuery("SELECT * FROM " . rex::getTable("nv_modulepreview_collections") . " WHERE id = :id Limit 1", ["id" => $id]);
+    if (!$oDb->getRows()) {
+        echo rex_view::error("Collection nicht gefunden");
         $func = '';
     }
 }
@@ -30,7 +31,7 @@ if ($func == 'delete') {
         ->setTable(rex::getTable("nv_modulepreview_collections"))
         ->setWhere(['id' => $id])
         ->delete();
-    echo rex_view::success("Kategorie gelöscht");
+    echo rex_view::success("Collection gelöscht");
     $func = '';
 }
 
@@ -41,31 +42,33 @@ if ($func == 'edit' || $func == 'add') {
     $id = rex_request('id', 'int');
     $form = rex_form::factory(rex::getTable("nv_modulepreview_collections"), '', 'id=' . $id);
 
+    $aSaveFromSlice = array();
+
     if ($func == 'add') {
         $slice_id = rex_request('slice_id', 'int');
         $module_id = rex_request('module_id', 'int');
         if ($slice_id) {
             $oSlice = rex_article_slice::getArticleSliceById($slice_id);
-            
+
             $aProperties = array(
-                "revision" => $oSlice->getValue("revision"),                
+                "revision" => $oSlice->getValue("revision"),
             );
 
-            for($iX=1;$iX<=20;$iX++) {
-                $aProperties["value_".$iX] = $oSlice->getValue($iX);
+            for ($iX = 1; $iX <= 20; $iX++) {
+                $aProperties["value_" . $iX] = $oSlice->getValue($iX);
             }
 
-            for($iX=1;$iX<=10;$iX++) {
-                $aProperties["media_".$iX] = $oSlice->getMedia($iX);
+            for ($iX = 1; $iX <= 10; $iX++) {
+                $aProperties["media_" . $iX] = $oSlice->getMedia($iX);
             }
-            for($iX=1;$iX<=10;$iX++) {
-                $aProperties["media_".$iX] = $oSlice->getMediaList($iX);
+            for ($iX = 1; $iX <= 10; $iX++) {
+                $aProperties["media_" . $iX] = $oSlice->getMediaList($iX);
             }
-            for($iX=1;$iX<=10;$iX++) {
-                $aProperties["links_".$iX] = $oSlice->getLink($iX);
+            for ($iX = 1; $iX <= 10; $iX++) {
+                $aProperties["links_" . $iX] = $oSlice->getLink($iX);
             }
-            for($iX=1;$iX<=10;$iX++) {
-                $aProperties["linklists_".$iX] = $oSlice->getLinkList($iX);
+            for ($iX = 1; $iX <= 10; $iX++) {
+                $aProperties["linklists_" . $iX] = $oSlice->getLinkList($iX);
             }
 
             $aSaveFromSlice = array(
@@ -147,10 +150,11 @@ if ($func == 'edit' || $func == 'add') {
 }
 
 if ($func == '') {
-
-    if ($_SESSION["categories_show_msg"]) {
-        echo $_SESSION["categories_show_msg"];
-        unset($_SESSION["categories_show_msg"]);
+    if (isset($_SESSION["categories_show_msg"])) {
+        if ($_SESSION["categories_show_msg"]) {
+            echo $_SESSION["categories_show_msg"];
+            unset($_SESSION["categories_show_msg"]);
+        }
     }
 
     $query = "SELECT id,title,prio,status FROM " . rex::getTable("nv_modulepreview_collections") . " ORDER BY prio ASC";
@@ -159,7 +163,7 @@ if ($func == '') {
 
     $list->removeColumn('id');
 
-    $list->setColumnLabel('title', "Kategorie");
+    $list->setColumnLabel('title', "Collection");
     $list->setColumnSortable('title');
     $list->setColumnLabel('prio', "Priorität");
     $list->setColumnSortable('prio');

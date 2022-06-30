@@ -4,9 +4,9 @@ $list = rex_request('list', 'string');
 $id = rex_request('id', 'integer');
 
 if ($id) {
-
-    $oTmp = rex_yform_manager_dataset::get($id, rex::getTable("nv_modulepreview_categories"));
-    if (!$oTmp->id) {
+    $oDb = rex_sql::factory();
+    $oDb->setQuery("SELECT * FROM " . rex::getTable("nv_modulepreview_categories") . " WHERE id = :id Limit 1",["id" => $id]);
+    if (!$oDb->getRows()) {
         echo rex_view::error("Kategorie nicht gefunden");
         $func = '';
     }
@@ -117,9 +117,11 @@ if ($func == 'edit' || $func == 'add') {
 
 if ($func == '') {
 
-    if ($_SESSION["categories_show_msg"]) {
-        echo $_SESSION["categories_show_msg"];
-        unset($_SESSION["categories_show_msg"]);
+    if (isset($_SESSION["categories_show_msg"])) {
+        if ($_SESSION["categories_show_msg"]) {
+            echo $_SESSION["categories_show_msg"];
+            unset($_SESSION["categories_show_msg"]);
+        }
     }
 
     $query = "SELECT id,title,prio,status FROM " . rex::getTable("nv_modulepreview_categories") . " ORDER BY prio ASC";
