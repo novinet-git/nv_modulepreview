@@ -17,7 +17,7 @@ class rex_api_module_preview_get_modules extends rex_api_function
 
         $moduleList = '';
 
-        $moduleList .= '<div class="nv-modal-header"><div class="nv-modal-header-label">'.rex_i18n::msg('nv_modulepreview_modules_choose').'</div>';
+        $moduleList .= '<!-- nv-modal-header start --><div class="nv-modal-header"><div class="nv-modal-header-label">'.rex_i18n::msg('nv_modulepreview_modules_choose').'</div>';
 
         $iCollections = false;
         if (rex_plugin::get('nv_modulepreview','collections')->isAvailable()) {
@@ -30,11 +30,11 @@ class rex_api_module_preview_get_modules extends rex_api_function
             $moduleList .= '</div>';
         }
         
-        $moduleList .= '</div>';
+        $moduleList .= '</div><!-- nv-modal-header-end -->';
 
 
         $moduleList .= '<div class="container">';
-        $moduleList .= '<ul class="module-list">';
+        $moduleList .= '<!-- nv-modale-list start --><ul class="module-list">';
 
         $articleId = rex_request('article_id', 'int');
         $categoryId = rex_request('category_id', 'int');
@@ -98,7 +98,7 @@ class rex_api_module_preview_get_modules extends rex_api_function
         }
 
         $moduleList .= nvModulepreview::getPreview($aModules);
-        $moduleList .= '</ul>';
+        $moduleList .= '</ul><!-- nv-modale-list end -->';
         $moduleList .= '</div>';
 
         $moduleList = rex_extension::registerPoint(new rex_extension_point('NV_MODULEPREVIEW_MODULESELECT', $moduleList, [

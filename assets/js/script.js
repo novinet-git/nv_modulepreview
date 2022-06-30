@@ -1,4 +1,4 @@
-let $showModulePreview, slicePosition, slice, $modules, $modulePreview, $close, $modulesSearch, $body, $html, previewActive = false, moduleAdded = false, isGridblock = false;
+let $showModulePreview, slicePosition, slice, $modules, $modulePreview, $close, $modulesSearch, $body, $html, previewActive = false, moduleAdded = false, isGridblock = $collectionTabs = false;
 
 $(document).on('rex:ready', function () {
 
@@ -85,6 +85,7 @@ function showModulePreview(elem) {
       if ($modules.length == "1" && !$('.nv-copy').length) {
         window.location.href=$modules.eq(0).attr('href');
       }
+
     }
   })
   .fail(function (jqXHR, textStatus, errorThrown) {
@@ -97,6 +98,16 @@ function attachModuleEventHandler() {
 
   if ($modulesSearch.length) {
     $modulesSearch.focus();
+
+
+    $collectionTabs = $('#nv-collections-tabs li a');
+    if ($collectionTabs.length) {
+      $collectionTabs.on('click', function (event) {
+          $modulesSearch.val('');
+          searchModules();
+      })
+    }
+
   }
 
   $modules.on('click', function () {
@@ -117,6 +128,10 @@ function attachModuleEventHandler() {
   });
 
   $modulesSearch.on('keyup', function () {
+    searchModules();
+  });
+
+  function searchModules() {
     const value = $modulesSearch.val();
     if (value) {
       $('.nv-category').hide();
@@ -131,7 +146,7 @@ function attachModuleEventHandler() {
       $modules.parent().show();
       $('.nv-category').show();
     }
-  });
+  }
 
   /**
    * trap tabbable elements

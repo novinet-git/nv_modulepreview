@@ -36,6 +36,12 @@ $colorPrimaryDark: #1a3332;
     padding: 40px;
     z-index: 1000005;
 
+    .inner {
+        width: 100%;
+        max-width: 1600px;
+        margin: auto;
+    }
+
     @media (max-width: 768px) {
         padding: 35px 0;
     }

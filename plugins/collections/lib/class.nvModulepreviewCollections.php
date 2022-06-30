@@ -1,10 +1,18 @@
 <?php class nvModulepreviewCollections
 {
+    private static function getPlugin()
+    {
+        return rex_plugin::get('nv_modulepreview', 'collections');
+    }
 
     public static function addButtons(rex_extension_point $ep)
     {
-        $revision = '0';
+        $sFunction = rex_request('function', 'string', null);
+        $iSliceId = rex_request('slice_id', 'int', null);
 
+        if (rex_be_controller::getCurrentPage() != "content/edit" or ($iSliceId && $iSliceId == $ep->getParam('slice_id') && ($sFunction == "add" or $sFunction == "edit"))) {
+            return;
+        }
         static::addButton($ep, [
             'hidden_label' => 'In collection speichern',
             'url' => rex_url::backendController([
@@ -14,12 +22,11 @@
                 'module_id' => $ep->getParam('module_id'),
                 'slice_id' => $ep->getParam('slice_id'),
                 'clang' => $ep->getParam('clang'),
-                'ctype' => $ep->getParam('ctype'),
-                'revision' => $revision
+                'ctype' => $ep->getParam('ctype')
             ]),
             'attributes' => [
                 'class' => ['btn-copy nv-collections'],
-                'title' => 'In Collection speichern',
+                'title' => 'Als Collection speichern',
                 'data-pjax-no-history' => 'true',
             ],
             'icon' => 'package-addon',
@@ -57,11 +64,31 @@
         $oDb->setQuery("SELECT * FROM " . rex::getTable("nv_modulepreview_collections") . " WHERE status = '1' ORDER BY prio ASC");
         if ($oDb->getRows()) {
 
+            $sHtmlTabs = '<div class="container">';
+            $sHtmlTabs .= '<ul class="nav nav-tabs tab-nav" role="tablist" id="nv-collections-tabs">';
+            $sHtmlTabs .= '<li class="active">';
+            $sHtmlTabs .= '<a href="#nv-collections-tab-modules" aria-controls="nv-collections-tab-modules" role="tab" data-toggle="tab" aria-expanded="true">Module</a>';
+            $sHtmlTabs .= '</li>';
+            $sHtmlTabs .= '<li>';
+            $sHtmlTabs .= '<a href="#nv-collections-tab-collections" aria-controls="nv-collections-tab-collections" role="tab" data-toggle="tab">Collections</a>';
+            $sHtmlTabs .= '</li>';
+            $sHtmlTabs .= '</ul>';
+            $sHtmlTabs .= '</div>';
+            $sHtmlTabs .= '<div class="tab-content">';
+            $sHtmlTabs .= '<div role="tabpanel" class="tab-pane fade active in" id="nv-collections-tab-modules">';
 
 
-            $sHtml = '<li class="column large" id="from_collection"><div class="nv-category nv-category-collection"><strong>Modul Collections</strong>';
-            $sHtml .= '<br><small>Bereits befüllte Module</small>';
-            $sHtml .= '</div></li>';
+
+
+
+            $sHtml = '</div>';
+            $sHtml .= '</div>';
+            $sHtml .= '<div role="tabpanel" class="tab-pane fade" id="nv-collections-tab-collections">';
+            $sHtml .= '<div class="container">';
+            $sHtml .= '<ul class="module-list">';
+            #$sHtml .= '<li class="column large" id="from_collection"><div class="nv-category nv-category-collection"><strong>Modul Collections</strong>';
+            #$sHtml .= '<br><small>Bereits befüllte Module</small>';
+            #$sHtml .= '</div></li>';
 
             $sShowAsList = "";
             if (rex_config::get('nv_modulepreview', 'show_as_list')) {
@@ -80,7 +107,7 @@
                 $sHtml .= '<a href="' . $context->getUrl(['module_id' => $oItem->getValue("module_id")]) . '" data-href="' . $context->getUrl(['module_id' => $oItem->getValue("module_id")]) . '" class="module" data-name="' . $oItem->getValue("module_id") . '.jpg" data-category="from_collection">';
                 $sHtml .= '<div class="header">';
 
-                $sHtml .= '<span>'.$oDb->getValue("title").' (Modul: '.$sql->getValue("name").')</span>';
+                $sHtml .= '<span>' . $oDb->getValue("title") . ' (Modul: ' . $sql->getValue("name") . ')</span>';
                 $sHtml .= '</div>';
 
                 $fileUrl = rex_url::addonAssets('nv_modulepreview', 'images/na.png');
@@ -108,8 +135,15 @@
             }
         }
 
+        $sHtml .= '</ul>';
+        $sHtml .= '</div>';
+        $sHtml .= '</div>';
+        $sHtml .= '</div>';
 
-        $sSubject = str_replace("</ul>", $sHtml . "</ul>", $sSubject);
+        $sSubject = str_replace("<!-- nv-modal-header-end -->", "<!-- nv-modal-header-end -->" . $sHtmlTabs, $sSubject);
+        $sSubject = str_replace("</ul><!-- nv-modale-list end -->", $sHtml . "</ul><!-- nv-modale-list end -->", $sSubject);
+
+
 
         return $sSubject;
     }
@@ -158,5 +192,15 @@
         }
 
         return $aArr;
+    }
+
+    public static function generateCss()
+    {
+        $oPlugin = self::getPlugin();
+        $compiler = new rex_scss_compiler();
+        $compiler->setRootDir($oPlugin->getPath('scss/'));
+        $compiler->setScssFile([$oPlugin->getPath("scss/nv_modulepreview_collections.scss")]);
+        $compiler->setCssFile($oPlugin->getAssetsPath('css/nv_modulepreview_collections.css'));
+        $compiler->compile();
     }
 }

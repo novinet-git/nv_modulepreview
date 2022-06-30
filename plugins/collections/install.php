@@ -11,3 +11,5 @@ rex_sql_table::get(rex::getTable('nv_modulepreview_collections'))
 ->ensureGlobalColumns()
 ->setPrimaryKey('id')
 ->ensure();
+
+$this->setConfig('generatefiles',true);
