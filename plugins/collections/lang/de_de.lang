@@ -1,0 +1,38 @@
+# plugin: nv_modulepreview/collections de_de
+
+nv_modulepreview_collections = Collections
+nv_modulepreview_collections_key = nvModulePreview
+nv_modulepreview_collections_config = Konfiguration
+nv_modulepreview_collections_modules = Modul
+nv_modulepreview_collections = Collections
+nv_modulepreview_collections_help = Hilfe
+
+nv_modulepreview_collections_add = Collection hinzufügen
+nv_modulepreview_collections_edit = Collection bearbeiten
+nv_modulepreview_collections_title = Titel
+nv_modulepreview_collections_module = Modul
+nv_modulepreview_collections_description = Beschreibung
+nv_modulepreview_collections_prio = Prioriät
+nv_modulepreview_collections_properties = Eigenschaften
+nv_modulepreview_collections_status = Status
+nv_modulepreview_collections_status_active = Aktiv
+nv_modulepreview_collections_status_inactive = Inaktiv
+
+nv_modulepreview_collections_module_id = Modul ID
+nv_modulepreview_collections_module_name = Modul Name
+nv_modulepreview_collections_thumbnail = Vorschaubild
+nv_modulepreview_collections_description = Beschreibung
+nv_modulepreview_collections_module_edit = Modulvorschau bearbeiten
+
+nv_modulepreview_collections_config_items_per_row = Module pro Zeile ausgeben
+nv_modulepreview_collections_config_show_search = Suche anzeigen
+nv_modulepreview_collections_config_overwrite_gridblock = Modulauswahl auch für Gridblock anwenden
+nv_modulepreview_collections_config_show_only_gridblock = Bei Modulauswahl (System) nur Gridblock anzeigen
+nv_modulepreview_collections_config_hide_images = Bilder verbergen
+nv_modulepreview_collections_config_show_as_list = Als Liste anzeigen (Bilder werden ausgeblendet)
+
+nv_modulepreview_collections_modules_choose = Modulauswahl
+nv_modulepreview_collections_modules_start_searching = Suchbegriff eingeben ...
+
+nv_modulepreview_collections_mod_choose_modul = - Inhaltsblock wählen -
+nv_modulepreview_collections_mod_copy_insertmodul = Inhaltsblock &raquo;###modname###&laquo; mit der ID ####modid### einfügen

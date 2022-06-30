@@ -113,6 +113,11 @@ $colorPrimaryDark: #1a3332;
             font-size: 1.6rem;
             display: block;
             margin-top: 20px;
+
+            &.nv-category-collection {
+                background: #E64415;
+                color: white;
+            }
         }
 
         .column {

@@ -19,7 +19,12 @@ class rex_api_module_preview_get_modules extends rex_api_function
 
         $moduleList .= '<div class="nv-modal-header"><div class="nv-modal-header-label">'.rex_i18n::msg('nv_modulepreview_modules_choose').'</div>';
 
-        if (rex_config::get('nv_modulepreview', 'show_search') && !rex_config::get('nv_modulepreview', 'show_only_gridblock')) {
+        $iCollections = false;
+        if (rex_plugin::get('nv_modulepreview','collections')->isAvailable()) {
+            $iCollections = count(nvModulepreviewCollections::getCollections());
+        }
+
+        if (rex_config::get('nv_modulepreview', 'show_search') && (!rex_config::get('nv_modulepreview', 'show_only_gridblock') OR $iCollections)) {
             $moduleList .= '<div class="form-group">';
             $moduleList .= '<label class="control-label" for="module-preview-search"><input class="form-control" name="module-preview-search" type="text" id="module-preview-search" value="" placeholder="'.rex_i18n::msg('nv_modulepreview_modules_start_searching').'" /></label>';
             $moduleList .= '</div>';
@@ -95,6 +100,16 @@ class rex_api_module_preview_get_modules extends rex_api_function
         $moduleList .= nvModulepreview::getPreview($aModules);
         $moduleList .= '</ul>';
         $moduleList .= '</div>';
+
+        $moduleList = rex_extension::registerPoint(new rex_extension_point('NV_MODULEPREVIEW_MODULESELECT', $moduleList, [
+            'page' => rex_be_controller::getCurrentPage(),
+            'article_id' => $articleId,
+            'clang' => $clang,
+            'ctype' => $ctype,
+            'category_id' => $categoryId,
+            'function' => 'add',
+            'buster' => time()
+        ]));
 
         header('Content-Type: text/html; charset=UTF-8');
         echo $moduleList;

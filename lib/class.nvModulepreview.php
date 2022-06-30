@@ -54,9 +54,9 @@
             $sHtml .= '</a>';
             $sHtml .= '</div>';
             $sHtml .= '<script>';
-            $sHtml .= "$('body').trigger('rex:ready', [$('body')]);
-        $(document).trigger('ready');
-        $(document).trigger('pjax:success');";
+            $sHtml .= "$('body').trigger('rex:ready', [$('.btn-choosegridmodul')]);";
+            #$sHtml .= "$(document).trigger('ready');";
+            #$sHtml .= "$(document).trigger('pjax:success');";
             $sHtml .= '</script>';
             return $sHtml;
         }
@@ -64,7 +64,7 @@
         foreach ($aItems as $aItem) {
             $sHtml .= self::getPreviewMarkup($aItem);
         }
-       
+
         return $sHtml;
     }
 
