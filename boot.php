@@ -96,3 +96,5 @@ rex_extension::register('OUTPUT_FILTER', static function (rex_extension_point $e
         );
     }
 });
+
+rex_extension::register('MODULE_DELETED', array('nvModulepreview', 'clearModules'), rex_extension::LATE);

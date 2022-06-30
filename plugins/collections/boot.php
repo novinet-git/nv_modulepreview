@@ -17,3 +17,6 @@ nvModulepreviewCollections::addSliceFromCollection();
 rex_extension::register('STRUCTURE_CONTENT_SLICE_MENU', ['nvModulepreviewCollections', 'addButtons']);
 
 rex_extension::register('NV_MODULEPREVIEW_MODULESELECT', ['nvModulepreviewCollections', 'addCollectionsToMoudleSelect']);
+
+rex_extension::register('MODULE_DELETED', array('nvModulepreviewCollections', 'clearModules'), rex_extension::LATE);
+

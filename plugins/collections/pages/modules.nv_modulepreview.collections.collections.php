@@ -48,27 +48,32 @@ if ($func == 'edit' || $func == 'add') {
         $slice_id = rex_request('slice_id', 'int');
         $module_id = rex_request('module_id', 'int');
         if ($slice_id) {
-            $oSlice = rex_article_slice::getArticleSliceById($slice_id);
+
+            $oSlice = rex_sql::factory();
+            $oSlice->setQuery("SELECT * FROM " . rex::getTable("article_slice") . " WHERE id = :id Limit 1", ["id" => $slice_id]);
+            if (!$oSlice->getRows()) {
+                return;
+            }
 
             $aProperties = array(
                 "revision" => $oSlice->getValue("revision"),
             );
 
             for ($iX = 1; $iX <= 20; $iX++) {
-                $aProperties["value_" . $iX] = $oSlice->getValue($iX);
+                $aProperties["value_" . $iX] = $oSlice->getValue("value".$iX);
             }
 
             for ($iX = 1; $iX <= 10; $iX++) {
-                $aProperties["media_" . $iX] = $oSlice->getMedia($iX);
+                $aProperties["media_" . $iX] = $oSlice->getValue("media".$iX);
             }
             for ($iX = 1; $iX <= 10; $iX++) {
-                $aProperties["media_" . $iX] = $oSlice->getMediaList($iX);
+                $aProperties["media_" . $iX] = $oSlice->getValue("medialist".$iX);
             }
             for ($iX = 1; $iX <= 10; $iX++) {
-                $aProperties["links_" . $iX] = $oSlice->getLink($iX);
+                $aProperties["links_" . $iX] = $oSlice->getValue("link".$iX);
             }
             for ($iX = 1; $iX <= 10; $iX++) {
-                $aProperties["linklists_" . $iX] = $oSlice->getLinkList($iX);
+                $aProperties["linklists_" . $iX] = $oSlice->getValue("linklist".$iX);
             }
 
             $aSaveFromSlice = array(

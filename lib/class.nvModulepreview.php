@@ -267,4 +267,23 @@
         $compiler->setCssFile($oAddon->getAssetsPath('css/nv_modulepreview.css'));
         $compiler->compile();
     }
+
+    public static function clearModules($ep) {
+        $aParams = $ep->getParams();
+        $iModulesId = $aParams["id"];
+
+        $oDb = rex_sql::factory();
+        $oDb->setQuery("SELECT * FROM " . rex::getTable("nv_modulepreview_categories") . " ORDER BY prio ASC");
+        foreach ($oDb as $oItem) {
+            $sModules = $oItem->getValue("modules");
+            $aModules = explode("|",substr($sModules,1,-1));
+            $aNewModules = array();
+            foreach($aModules AS $iX => $iModuleId) {
+                $aNewModules[] = $iModuleId;
+            }
+            $sModules = "|".implode("|",$aNewModules)."|";
+            $oDb2 = rex_sql::factory();
+            $oDb2->setQuery("UPDATE " . rex::getTable("nv_modulepreview_categories") . " SET modules = :modules WHERE id = :id",["modules" => $sModules, "id" => $oItem->getValue("id")]);
+        }
+    }
 }

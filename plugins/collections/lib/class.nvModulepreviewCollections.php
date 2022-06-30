@@ -208,4 +208,12 @@
         $compiler->setCssFile($oPlugin->getAssetsPath('css/nv_modulepreview_collections.css'));
         $compiler->compile();
     }
+
+    public static function clearModules($ep) {
+        $aParams = $ep->getParams();
+        $iModuleId = $aParams["id"];
+        $oDb = rex_sql::factory();
+        $oDb->setQuery("DELETE FROM " . rex::getTable("nv_modulepreview_collections") . " WHERE module_id = :module_id",["module_id" => $iModuleId]);
+        
+    }
 }
