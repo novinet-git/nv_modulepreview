@@ -81,7 +81,7 @@
 
 
 
-            $sHtml = '</div>';
+            $sHtml = '<br></div>';
             $sHtml .= '</div>';
             $sHtml .= '<div role="tabpanel" class="tab-pane fade" id="nv-collections-tab-collections">';
             $sHtml .= '<div class="container">';
@@ -137,10 +137,10 @@
 
         $sHtml .= '</ul>';
         $sHtml .= '</div>';
-        $sHtml .= '</div>';
+        $sHtml .= '<br></div>';
         $sHtml .= '</div>';
 
-        $sSubject = str_replace("<!-- nv-modal-header-end -->", "<!-- nv-modal-header-end -->" . $sHtmlTabs, $sSubject);
+        $sSubject = str_replace("<!-- nv-modal-header-end --></div>", "<!-- nv-modal-header-end --></div>" . $sHtmlTabs, $sSubject);
         $sSubject = str_replace("</ul><!-- nv-modale-list end -->", $sHtml . "</ul><!-- nv-modale-list end -->", $sSubject);
 
 

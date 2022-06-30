@@ -13,7 +13,7 @@ class rex_api_module_preview_get_modules_gridblock extends rex_api_function
         $aModules = $aSessionParams["modules"];
         $moduleList = '';
 
-        $moduleList .= '<div class="nv-modal-header"><div class="nv-modal-header-label">'.rex_i18n::msg('nv_modulepreview_modules_choose').'</div>';
+        $moduleList .= '<div class="nv-fixed"><!-- nv-modal-header start --><div class="nv-modal-header"><div class="nv-modal-header-label">'.rex_i18n::msg('nv_modulepreview_modules_choose').'</div>';
 
         if (rex_config::get('nv_modulepreview', 'show_search')) {
             $moduleList .= '<div class="form-group">';
@@ -21,9 +21,9 @@ class rex_api_module_preview_get_modules_gridblock extends rex_api_function
             $moduleList .= '</div>';
         }
         
-        $moduleList .= '</div>';
+        $moduleList .= '</div><!-- nv-modal-header-end --></div>';
 
-        $moduleList .= '<div class="container">';
+        $moduleList .= '<div class="container nv-scrollable-content">';
         $moduleList .= '<ul class="module-list gridblock-moduleselector" role="menu" data-colid="' . $aParams["colid"] . '" data-uid="' . $aParams["uid"] . '">';
 
 

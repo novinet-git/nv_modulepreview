@@ -17,7 +17,7 @@ class rex_api_module_preview_get_modules extends rex_api_function
 
         $moduleList = '';
 
-        $moduleList .= '<!-- nv-modal-header start --><div class="nv-modal-header"><div class="nv-modal-header-label">'.rex_i18n::msg('nv_modulepreview_modules_choose').'</div>';
+        $moduleList .= '<div class="nv-fixed"><!-- nv-modal-header start --><div class="nv-modal-header"><div class="nv-modal-header-label">'.rex_i18n::msg('nv_modulepreview_modules_choose').'</div>';
 
         $iCollections = false;
         if (rex_plugin::get('nv_modulepreview','collections')->isAvailable()) {
@@ -30,10 +30,10 @@ class rex_api_module_preview_get_modules extends rex_api_function
             $moduleList .= '</div>';
         }
         
-        $moduleList .= '</div><!-- nv-modal-header-end -->';
+        $moduleList .= '</div><!-- nv-modal-header-end --></div>';
 
 
-        $moduleList .= '<div class="container">';
+        $moduleList .= '<div class="container nv-scrollable-content">';
         $moduleList .= '<!-- nv-modale-list start --><ul class="module-list">';
 
         $articleId = rex_request('article_id', 'int');

@@ -31,7 +31,7 @@ $colorPrimaryDark: #1a3332;
     max-height: 100vh;
     left: 0;
     top: 0;
-    overflow: auto;
+    overflow: none;
     background-color: rgba(81, 94, 123, 0.8);
     padding: 40px;
     z-index: 1000005;
@@ -73,6 +73,10 @@ $colorPrimaryDark: #1a3332;
         }
     }
 
+    .nv-fixed {
+        position:sticky;
+    }
+
     .nv-modal-header {
         width: 100%;
         max-width: 1600px;
@@ -102,6 +106,12 @@ $colorPrimaryDark: #1a3332;
         max-width: 1600px;
         background: #f8f9fa;
         padding: 0px 20px 10px 20px;
+
+        &.nv-scrollable-content {
+            overflow-y: auto;
+            min-height: 60vh;
+            max-height: 65vh;
+        }
     }
 
     .module-list {
