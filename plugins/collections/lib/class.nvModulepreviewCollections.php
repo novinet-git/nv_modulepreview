@@ -74,21 +74,11 @@
             $sHtmlTabs .= '</li>';
             $sHtmlTabs .= '</ul>';
             $sHtmlTabs .= '</div>';
-            $sHtmlTabs .= '<div class="tab-content">';
-            $sHtmlTabs .= '<div role="tabpanel" class="tab-pane fade active in" id="nv-collections-tab-modules">';
 
 
-
-
-
-            $sHtml = '<br></div>';
-            $sHtml .= '</div>';
+            $sHtml .= '<!-- tab-content-collections start -->';
             $sHtml .= '<div role="tabpanel" class="tab-pane fade" id="nv-collections-tab-collections">';
-            $sHtml .= '<div class="container">';
-            $sHtml .= '<ul class="module-list">';
-            #$sHtml .= '<li class="column large" id="from_collection"><div class="nv-category nv-category-collection"><strong>Modul Collections</strong>';
-            #$sHtml .= '<br><small>Bereits befüllte Module</small>';
-            #$sHtml .= '</div></li>';
+            $sHtml .= '<!-- nv-modale-list-collections start --><ul class="module-list">';
 
             $sShowAsList = "";
             if (rex_config::get('nv_modulepreview', 'show_as_list')) {
@@ -135,13 +125,14 @@
             }
         }
 
-        $sHtml .= '</ul>';
+        $sHtml .= '</ul><!-- nv-modale-list-collections end -->';
         $sHtml .= '</div>';
-        $sHtml .= '<br></div>';
-        $sHtml .= '</div>';
+        $sHtml .= '<!-- tab-content-collections end -->';
 
-        $sSubject = str_replace("<!-- nv-modal-header-end --></div>", "<!-- nv-modal-header-end --></div>" . $sHtmlTabs, $sSubject);
-        $sSubject = str_replace("</ul><br /><!-- nv-modale-list end -->", $sHtml . "</ul><br /><!-- nv-modale-list end -->", $sSubject);
+
+
+        $sSubject = str_replace("<!-- nv-modal-header-end -->", "<!-- nv-modal-header-end -->" . $sHtmlTabs, $sSubject);
+        $sSubject = str_replace("<!-- tab-content-modules end -->", "<!-- tab-content-modules end -->" . $sHtml, $sSubject);
 
 
 
@@ -160,7 +151,7 @@
 
 
         $oCollection = rex_sql::factory();
-        $oCollection->setQuery("SELECT * FROM " . rex::getTable("nv_modulepreview_collections") . " WHERE id = :id Limit 1",["id" => $iCollectionId]);
+        $oCollection->setQuery("SELECT * FROM " . rex::getTable("nv_modulepreview_collections") . " WHERE id = :id Limit 1", ["id" => $iCollectionId]);
         if (!$oCollection->getRows()) {
             return;
         }
@@ -209,11 +200,11 @@
         $compiler->compile();
     }
 
-    public static function clearModules($ep) {
+    public static function clearModules($ep)
+    {
         $aParams = $ep->getParams();
         $iModuleId = $aParams["id"];
         $oDb = rex_sql::factory();
-        $oDb->setQuery("DELETE FROM " . rex::getTable("nv_modulepreview_collections") . " WHERE module_id = :module_id",["module_id" => $iModuleId]);
-        
+        $oDb->setQuery("DELETE FROM " . rex::getTable("nv_modulepreview_collections") . " WHERE module_id = :module_id", ["module_id" => $iModuleId]);
     }
 }
