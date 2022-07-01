@@ -176,16 +176,20 @@ if ($func == '') {
         }
     }
 
-    $query = "SELECT id,title,prio,status FROM " . rex::getTable("nv_modulepreview_collections") . " ORDER BY prio ASC";
+    $query = "SELECT collection.id,collection.title,CONCAT(module.name, \" [ID: \", module.id,\"]\") AS fullname,collection.prio,collection.status FROM " . rex::getTable("nv_modulepreview_collections") . " AS collection JOIN " . rex::getTable("module") . " AS module ON collection.module_id = module.id ORDER BY collection.prio ASC";
     $list = rex_list::factory($query,10000);
     $list->addTableAttribute('class', 'table-striped table-hover sortable-list');
-    $list->setRowAttributes(["id" => "recordsArray_###id###"]);
-    $list->addTableColumnGroup([10, '*']);
-    $list->addColumn('sort','<i class="rex-icon fa fa-bars sort-icon"></i>','1');
-    $list->setColumnLayout('sort',['<th></th>','<td class="sort-handle">###VALUE###</td>']);
+    $list->setRowAttributes(["id" => "recordsArray_###collection.id###"]);
+    $list->addTableColumnGroup(['1%','30%']);
+    $thIcon = '<a class="rex-link-expanded" href="' . $list->getUrl(['func' => 'add']) . '"><i class="rex-icon rex-icon-add-user"></i></a>';
+    $tdIcon = '<i class="rex-icon fa fa-bars sort-icon"></i>';
+    $list->addColumn($thIcon, $tdIcon, 0, ['<th class="rex-table-icon">###VALUE###</th>', '<td class="rex-table-icon sort-handle">###VALUE###</td>']);
     $list->removeColumn('id');
 
     $list->setColumnLabel('title', "Collection");
+    $list->setColumnParams('title', ['func' => 'edit', 'id' => '###id###']);
+
+    $list->setColumnLabel('fullname', "Modul");
     #$list->setColumnSortable('title');
     $list->removeColumn('prio');
     #$list->setColumnLabel('prio', "Priorität");
@@ -203,7 +207,7 @@ if ($func == '') {
     $list->setColumnLabel('status', "Status");
     #$list->setColumnSortable('status');
 
-    $list->setColumnParams('status', ['func' => 'setstatus', 'oldstatus' => '###status###', 'id' => '###id###']);
+    $list->setColumnParams('status', ['func' => 'setstatus', 'oldstatus' => '###status###', 'id' => '###collection.id###']);
     $list->setColumnLayout('status', ['<th class="rex-table-action">###VALUE###</th>', '<td class="rex-table-action">###VALUE###</td>']);
     $list->setColumnFormat('status', 'custom', function ($params) {
         /** @var rex_list $list */
@@ -218,23 +222,21 @@ if ($func == '') {
 
     $list->addColumn("Funktion", "Bearbeiten");
     $list->setColumnLayout("Funktion", ['<th class="rex-table-action" colspan="3">###VALUE###</th>', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnParams("Funktion", ['func' => 'edit', 'id' => '###id###']);
+    $list->setColumnParams("Funktion", ['func' => 'edit', 'id' => '###collection.id###']);
 
     $list->addColumn('delete', "Löschen", -1, ['', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnParams('delete', ['func' => 'delete', 'id' => '###id###']);
+    $list->setColumnParams('delete', ['func' => 'delete', 'id' => '###collection.id###']);
     $list->addLinkAttribute('delete', 'onclick', "return confirm('Wirklich unwiderruflich löschen?');");
 
 
-    $sContent = '<br><a href="' . $list->getUrl(['func' => 'add']) . '" class="btn btn-save"><i class="rex-icon rex-icon-add-article"></i> &nbsp; Collection hinzufügen</a><br><br>';
     $sContent .= $list->get();
 
 
 
 
     $oFragment = new rex_fragment();
-    $oFragment->setVar("class", "edit");
-    $oFragment->setVar('title', "Collections", false);
-    $oFragment->setVar('body', $sContent, false);
+    $oFragment->setVar('title', "Liste der angelegten Collections");
+    $oFragment->setVar('content', $sContent, false);
     $sOutput = $oFragment->parse('core/page/section.php');
     echo $sOutput;
 } ?>

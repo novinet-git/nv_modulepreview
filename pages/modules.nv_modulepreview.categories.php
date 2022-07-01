@@ -138,21 +138,22 @@ if ($func == '') {
         }
     }
 
-    $query = "SELECT id,title,prio,status FROM " . rex::getTable("nv_modulepreview_categories") . " ORDER BY prio ASC";
+    $query = "SELECT id,title,description,prio,status FROM " . rex::getTable("nv_modulepreview_categories") . " ORDER BY prio ASC";
     $list = rex_list::factory($query,"10000");
-    #$list->DISABLE_PAGINATION = true;
     $list->addTableAttribute('class', 'table-striped table-hover sortable-list');
     $list->setRowAttributes(["id" => "recordsArray_###id###"]);
     $list->addTableColumnGroup([10, '*']);
 
-    $list->addColumn('sort','<i class="rex-icon fa fa-bars sort-icon"></i>','1');
-    $list->setColumnLayout('sort',['<th></th>','<td class="sort-handle">###VALUE###</td>']);
+    $thIcon = '<a class="rex-link-expanded" href="' . $list->getUrl(['func' => 'add']) . '"><i class="rex-icon rex-icon-add-user"></i></a>';
+    $tdIcon = '<i class="rex-icon fa fa-bars sort-icon"></i>';
+    $list->addColumn($thIcon, $tdIcon, 0, ['<th class="rex-table-icon">###VALUE###</th>', '<td class="rex-table-icon sort-handle">###VALUE###</td>']);
+
 
     $list->removeColumn('id');
     $list->removeColumn('prio');
 
     $list->setColumnLabel('title', "Kategorie");
-    $list->setColumnLabel('prio', "Priorität");
+    $list->setColumnParams('title', ['func' => 'edit', 'id' => '###id###']);
 
 
     $list->setColumnLabel('updatedate', "Aktualisiert");
@@ -186,18 +187,14 @@ if ($func == '') {
     $list->addColumn('delete', "Löschen", -1, ['', '<td class="rex-table-action">###VALUE###</td>']);
     $list->setColumnParams('delete', ['func' => 'delete', 'id' => '###id###']);
     $list->addLinkAttribute('delete', 'onclick', "return confirm('Wirklich unwiderruflich löschen?');");
-
-
-    $sContent = '<br><a href="' . $list->getUrl(['func' => 'add']) . '" class="btn btn-save"><i class="rex-icon rex-icon-add-article"></i> &nbsp; Kategorie hinzufügen</a><br><br>';
     $sContent .= $list->get();
 
 
 
 
     $oFragment = new rex_fragment();
-    $oFragment->setVar("class", "edit");
-    $oFragment->setVar('title', "Kategorie", false);
-    $oFragment->setVar('body', $sContent, false);
+    $oFragment->setVar('title', "Liste der angelegten Kategorien");
+    $oFragment->setVar('content', $sContent, false);
     $sOutput = $oFragment->parse('core/page/section.php');
     echo $sOutput;
 } ?>
