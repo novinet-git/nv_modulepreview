@@ -1,5 +1,5 @@
 package: nv_modulepreview/collections # Pflichtfeld
-version: '0.6.2-beta' # Pflichtfeld
+version: '0.7-beta' # Pflichtfeld
 author: novinet GmbH & Co KG
 supportpage: https://github.com/novinet-git/nv_modulepreview
 

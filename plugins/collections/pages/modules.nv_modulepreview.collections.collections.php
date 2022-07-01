@@ -1,3 +1,4 @@
+<div id="nvmsg"></div>
 <?php
 $func = rex_request('func', 'string');
 $list = rex_request('list', 'string');
@@ -11,6 +12,19 @@ if ($id) {
         echo rex_view::error("Collection nicht gefunden");
         $func = '';
     }
+}
+
+if ($func == "sort") {
+    ob_end_clean();
+    if (isset($_POST["recordsArray"])) {
+        foreach($_POST["recordsArray"] AS $iX => $iId) {
+            $iPrio = $iX+1;
+            $oDb = rex_sql::factory();
+            $oDb->setQuery("UPDATE " . rex::getTable("nv_modulepreview_collections") . " SET prio = :prio WHERE id = :id Limit 1",["prio" => $iPrio, "id" => $iId]);
+        }
+    }
+    echo rex_view::success("Reihenfolge gespeichert");
+    exit;
 }
 
 if ($func == 'setstatus') {
@@ -163,19 +177,23 @@ if ($func == '') {
     }
 
     $query = "SELECT id,title,prio,status FROM " . rex::getTable("nv_modulepreview_collections") . " ORDER BY prio ASC";
-    $list = rex_list::factory($query);
-    $list->addTableAttribute('class', 'table-striped');
-
+    $list = rex_list::factory($query,10000);
+    $list->addTableAttribute('class', 'table-striped table-hover sortable-list');
+    $list->setRowAttributes(["id" => "recordsArray_###id###"]);
+    $list->addTableColumnGroup([10, '*']);
+    $list->addColumn('sort','<i class="rex-icon fa fa-bars sort-icon"></i>','1');
+    $list->setColumnLayout('sort',['<th></th>','<td class="sort-handle">###VALUE###</td>']);
     $list->removeColumn('id');
 
     $list->setColumnLabel('title', "Collection");
-    $list->setColumnSortable('title');
-    $list->setColumnLabel('prio', "Priorität");
-    $list->setColumnSortable('prio');
+    #$list->setColumnSortable('title');
+    $list->removeColumn('prio');
+    #$list->setColumnLabel('prio', "Priorität");
+    #$list->setColumnSortable('prio');
 
 
     $list->setColumnLabel('updatedate', "Aktualisiert");
-    $list->setColumnSortable('updatedate');
+    #$list->setColumnSortable('updatedate');
     $list->setColumnFormat('updatedate', 'custom', function ($params) {
         $list = $params['list'];
         $sStr = date("d.m.Y H:i", strtotime($list->getValue(updatedate)));
@@ -183,7 +201,7 @@ if ($func == '') {
     });
 
     $list->setColumnLabel('status', "Status");
-    $list->setColumnSortable('status');
+    #$list->setColumnSortable('status');
 
     $list->setColumnParams('status', ['func' => 'setstatus', 'oldstatus' => '###status###', 'id' => '###id###']);
     $list->setColumnLayout('status', ['<th class="rex-table-action">###VALUE###</th>', '<td class="rex-table-action">###VALUE###</td>']);
@@ -219,4 +237,21 @@ if ($func == '') {
     $oFragment->setVar('body', $sContent, false);
     $sOutput = $oFragment->parse('core/page/section.php');
     echo $sOutput;
-}
+} ?>
+<script type="text/javascript">
+	$(document).on('rex:ready', function() {
+		$(function() {
+			$(".sortable-list tbody").sortable({
+                handle: '.sort-handle',
+				opacity: 0.6,
+				cursor: 'move',
+				update: function() {
+					var order = $(this).sortable("serialize") + '&func=sort';
+					$.post("<?= rex_url::backendPage(rex_be_controller::getCurrentPage())?>", order,function(data) {
+                        $('#nvmsg').html(data);
+                    });
+				}
+			});
+		});
+	});
+</script>
