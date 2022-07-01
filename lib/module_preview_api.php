@@ -33,7 +33,7 @@ class rex_api_module_preview_get_modules extends rex_api_function
         $moduleList .= '</div><!-- nv-modal-header-end --></div>';
 
 
-        $moduleList .= '<div class="container nv-scrollable-content">';
+        $moduleList .= '<div class="container nv-scrollable-content"><br />';
         $moduleList .= '<!-- nv-modale-list start --><ul class="module-list">';
 
         $articleId = rex_request('article_id', 'int');
@@ -99,7 +99,7 @@ class rex_api_module_preview_get_modules extends rex_api_function
 
         $moduleList .= nvModulepreview::getPreview($aModules);
         $moduleList .= '</ul><!-- nv-modale-list end -->';
-        $moduleList .= '</div>';
+        $moduleList .= '<br /></div>';
 
         $moduleList = rex_extension::registerPoint(new rex_extension_point('NV_MODULEPREVIEW_MODULESELECT', $moduleList, [
             'page' => rex_be_controller::getCurrentPage(),

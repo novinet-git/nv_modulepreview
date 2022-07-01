@@ -23,7 +23,7 @@ class rex_api_module_preview_get_modules_gridblock extends rex_api_function
         
         $moduleList .= '</div><!-- nv-modal-header-end --></div>';
 
-        $moduleList .= '<div class="container nv-scrollable-content">';
+        $moduleList .= '<div class="container nv-scrollable-content"><br />';
         $moduleList .= '<ul class="module-list gridblock-moduleselector" role="menu" data-colid="' . $aParams["colid"] . '" data-uid="' . $aParams["uid"] . '">';
 
 
@@ -47,7 +47,7 @@ class rex_api_module_preview_get_modules_gridblock extends rex_api_function
 
         $moduleList .= nvModulepreview::getPreview($aModules);
         $moduleList .= '</ul>';
-        $moduleList .= '</div>';
+        $moduleList .= '<br /></div>';
 
         header('Content-Type: text/html; charset=UTF-8');
         echo $moduleList;

@@ -141,7 +141,7 @@
         $sHtml .= '</div>';
 
         $sSubject = str_replace("<!-- nv-modal-header-end --></div>", "<!-- nv-modal-header-end --></div>" . $sHtmlTabs, $sSubject);
-        $sSubject = str_replace("</ul><!-- nv-modale-list end -->", $sHtml . "</ul><!-- nv-modale-list end -->", $sSubject);
+        $sSubject = str_replace("</ul><br /><!-- nv-modale-list end -->", $sHtml . "</ul><br /><!-- nv-modale-list end -->", $sSubject);
 
 
 
