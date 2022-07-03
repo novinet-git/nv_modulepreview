@@ -4,14 +4,16 @@ $(document).on('rex:ready', function () {
 
   $showModulePreview = $('.show-module-preview');
   $modulePreview = $('#module-preview');
-  $close = $modulePreview.find('.close');
+  $close = $('.nv-modal-header').find('.close');
   $body = $('body');
   $html = $('html');
+
+
 
   hideModulePreview();
 
   $showModulePreview.off('click');
-  $close.off('click');
+  //$close.off('click');
 
   $showModulePreview.on('click', function (event) {
     event.preventDefault();
@@ -35,10 +37,7 @@ $(document).on('rex:ready', function () {
     }
   });
 
-  $close.on('click', function (event) {
-    event.preventDefault();
-    hideModulePreview();
-  });
+
 
   /**
    * contains case insensitive...
@@ -69,6 +68,7 @@ function showModulePreview(elem) {
         $modulePreview.fadeIn();
         $body.addClass('module-preview');
         $body.css('height', 'auto');
+        $body.css('overflow', 'hidden');
         $html.css('overflow', 'hidden');
         $body.addClass('modal-open');
         $modules.parent().show();
@@ -94,6 +94,31 @@ function showModulePreview(elem) {
 }
 
 function attachModuleEventHandler() {
+
+  calcHeight();
+  $( window ).resize(function() {
+    calcHeight();
+  });
+
+  function calcHeight() {
+    let offsetHeight = $( window ).outerHeight(); // höhe browserfenster
+    let offsetScrollContainer = $('.nv-modal-header').outerHeight();
+    let iHeight = offsetHeight-offsetScrollContainer;
+    if ($('#nv-collections-tabs').length) {
+      iHeight = iHeight-$('#nv-collections-tabs').outerHeight();
+    }
+    iHeight = iHeight-105;
+
+    $('.nv-scrollable-content-parent').css('height',iHeight+'px');
+
+    $body = $('body');
+    $html = $('html');
+    if ($('.nv-modal-header').parent('body').hasClass('module-preview')) {
+      $('.nv-modal-header').parent('body').css('overflow', 'hidden');
+      $('.nv-modal-header').parent('body').css('overflow', 'hidden');
+    }
+  }
+
   $modulesSearch = $modulePreview.find('#module-preview-search');
 
   if ($modulesSearch.length) {
@@ -105,10 +130,31 @@ function attachModuleEventHandler() {
       $collectionTabs.on('click', function (event) {
           $modulesSearch.val('');
           searchModules();
+          calcHeight();
       })
     }
 
   }
+  $close = $('.nv-modal-header').find('.close');
+  $close.on('click', function (event) {
+    event.preventDefault();
+    hideModulePreview();
+  });
+
+
+
+  function screenInfo() {
+       const showInfo = document.getElementById('showInfo');
+       let screenText = document.createTextNode(
+          "window.screen.availHeight " + window.screen.availHeight + "\n" + 
+          "window.screen.availWidth  " + window.screen.availWidth + "\n" + 
+          "window.screen.colorDepth  " + window.screen.colorDepth + "\n" + 
+          "window.screen.height      " + window.screen.height + "\n" + 
+          "window.screen.pixelDepth  " + window.screen.pixelDepth + "\n" + 
+          "window.screen.width       " + window.screen.width);
+      console.log(screenText);
+ }
+
 
   $modules.on('click', function () {
     const $this = $(this);
@@ -175,6 +221,7 @@ function hideModulePreview() {
     previewActive = false;
     $body.removeClass('module-preview');
     $body.css('height', '100%');
+    $body.css('overflow', 'initial');
     $html.css('overflow', 'initial');
     $body.removeClass('modal-open');
     $modulePreview.find('.inner').empty();

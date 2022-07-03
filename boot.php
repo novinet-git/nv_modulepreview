@@ -82,7 +82,7 @@ if (rex_addon::get("gridblock")->isAvailable() && $this->getConfig('overwrite_gr
 }
 
 rex_extension::register('OUTPUT_FILTER', static function (rex_extension_point $ep) {
-    $output = '<div id="module-preview" data-pjax-container="#rex-js-page-main-content"><div class="close"><span aria-hidden="true">&times;</span></div>';
+    $output = '<div id="module-preview" data-pjax-container="#rex-js-page-main-content">';
     $output .= '<div class="inner"></div>';
     $output .= '</div>';
 

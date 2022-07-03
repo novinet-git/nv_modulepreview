@@ -85,6 +85,7 @@ $colorPrimaryDark: #1a3332;
         margin: auto;
         padding: 20px 30px;
         font-weight: bold;
+        position: relative;
 
         .nv-modal-header-label {
         }
@@ -109,7 +110,8 @@ $colorPrimaryDark: #1a3332;
 
         &.nv-scrollable-content {
             overflow-y: auto;
-            max-height: 65vh;
+            //max-height: 65vh;
+            height: 100%
         }
     }
 
@@ -320,7 +322,7 @@ body.rex-theme-dark {
 
         .nv-modal-header {
             background-color: $colorPrimaryDark;
-
+            
             #module-preview-search {
                 color: rgba(255, 255, 255, 0.75);
                 background-color: rgba(27, 35, 44, 0.8);
