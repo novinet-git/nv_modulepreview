@@ -12,15 +12,22 @@ if ($id) {
         echo rex_view::error("Collection nicht gefunden");
         $func = '';
     }
+
+    if ($oDb->getRows()) {
+        if (!rex::getUser()->getComplexPerm('modules')->hasPerm($oDb->getValue("module_id"))) {
+            echo rex_view::error("Keine Berechtigung zur Bearbeitung dieser Collection");
+            $func = '';
+        }
+    }
 }
 
 if ($func == "sort") {
     ob_end_clean();
     if (isset($_POST["recordsArray"])) {
-        foreach($_POST["recordsArray"] AS $iX => $iId) {
-            $iPrio = $iX+1;
+        foreach ($_POST["recordsArray"] as $iX => $iId) {
+            $iPrio = $iX + 1;
             $oDb = rex_sql::factory();
-            $oDb->setQuery("UPDATE " . rex::getTable("nv_modulepreview_collections") . " SET prio = :prio WHERE id = :id Limit 1",["prio" => $iPrio, "id" => $iId]);
+            $oDb->setQuery("UPDATE " . rex::getTable("nv_modulepreview_collections") . " SET prio = :prio WHERE id = :id Limit 1", ["prio" => $iPrio, "id" => $iId]);
         }
     }
     echo rex_view::success("Reihenfolge gespeichert");
@@ -41,10 +48,10 @@ if ($func == 'setstatus') {
 
 
 if ($func == 'delete') {
-    rex_sql::factory()
+    dump(rex_sql::factory()
         ->setTable(rex::getTable("nv_modulepreview_collections"))
         ->setWhere(['id' => $id])
-        ->delete();
+        ->delete());
     echo rex_view::success("Collection gelöscht");
     $func = '';
 }
@@ -74,20 +81,20 @@ if ($func == 'edit' || $func == 'add') {
             );
 
             for ($iX = 1; $iX <= 20; $iX++) {
-                $aProperties["value_" . $iX] = $oSlice->getValue("value".$iX);
+                $aProperties["value_" . $iX] = $oSlice->getValue("value" . $iX);
             }
 
             for ($iX = 1; $iX <= 10; $iX++) {
-                $aProperties["media_" . $iX] = $oSlice->getValue("media".$iX);
+                $aProperties["media_" . $iX] = $oSlice->getValue("media" . $iX);
             }
             for ($iX = 1; $iX <= 10; $iX++) {
-                $aProperties["media_" . $iX] = $oSlice->getValue("medialist".$iX);
+                $aProperties["media_" . $iX] = $oSlice->getValue("medialist" . $iX);
             }
             for ($iX = 1; $iX <= 10; $iX++) {
-                $aProperties["links_" . $iX] = $oSlice->getValue("link".$iX);
+                $aProperties["links_" . $iX] = $oSlice->getValue("link" . $iX);
             }
             for ($iX = 1; $iX <= 10; $iX++) {
-                $aProperties["linklists_" . $iX] = $oSlice->getValue("linklist".$iX);
+                $aProperties["linklists_" . $iX] = $oSlice->getValue("linklist" . $iX);
             }
 
             $aSaveFromSlice = array(
@@ -176,18 +183,18 @@ if ($func == '') {
         }
     }
 
-    $query = "SELECT collection.id,collection.title,CONCAT(module.name, \" [ID: \", module.id,\"]\") AS fullname,collection.prio,collection.status FROM " . rex::getTable("nv_modulepreview_collections") . " AS collection JOIN " . rex::getTable("module") . " AS module ON collection.module_id = module.id ORDER BY collection.prio ASC";
-    $list = rex_list::factory($query,10000);
+    $query = "SELECT collection.id AS collection_id,collection.title,CONCAT(module.name, \" [ID: \", module.id,\"]\") AS fullname,collection.prio,collection.status FROM " . rex::getTable("nv_modulepreview_collections") . " AS collection JOIN " . rex::getTable("module") . " AS module ON collection.module_id = module.id ORDER BY collection.prio ASC";
+    $list = rex_list::factory($query, 10000);
     $list->addTableAttribute('class', 'table-striped table-hover sortable-list');
-    $list->setRowAttributes(["id" => "recordsArray_###collection.id###"]);
-    $list->addTableColumnGroup(['1%','30%']);
+    $list->setRowAttributes(["id" => "recordsArray_###collection_id###"]);
+    $list->addTableColumnGroup(['1%', '30%']);
     $thIcon = '<a class="rex-link-expanded" href="' . $list->getUrl(['func' => 'add']) . '"><i class="rex-icon rex-icon-add-user"></i></a>';
     $tdIcon = '<i class="rex-icon fa fa-bars sort-icon"></i>';
     $list->addColumn($thIcon, $tdIcon, 0, ['<th class="rex-table-icon">###VALUE###</th>', '<td class="rex-table-icon sort-handle">###VALUE###</td>']);
-    $list->removeColumn('id');
+    $list->removeColumn('collection_id');
 
     $list->setColumnLabel('title', "Collection");
-    $list->setColumnParams('title', ['func' => 'edit', 'id' => '###id###']);
+    $list->setColumnParams('title', ['func' => 'edit', 'id' => '###collection_id###']);
 
     $list->setColumnLabel('fullname', "Modul");
     #$list->setColumnSortable('title');
@@ -207,7 +214,7 @@ if ($func == '') {
     $list->setColumnLabel('status', "Status");
     #$list->setColumnSortable('status');
 
-    $list->setColumnParams('status', ['func' => 'setstatus', 'oldstatus' => '###status###', 'id' => '###collection.id###']);
+    $list->setColumnParams('status', ['func' => 'setstatus', 'oldstatus' => '###status###', 'id' => '###collection_id###']);
     $list->setColumnLayout('status', ['<th class="rex-table-action">###VALUE###</th>', '<td class="rex-table-action">###VALUE###</td>']);
     $list->setColumnFormat('status', 'custom', function ($params) {
         /** @var rex_list $list */
@@ -222,10 +229,10 @@ if ($func == '') {
 
     $list->addColumn("Funktion", "Bearbeiten");
     $list->setColumnLayout("Funktion", ['<th class="rex-table-action" colspan="3">###VALUE###</th>', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnParams("Funktion", ['func' => 'edit', 'id' => '###collection.id###']);
+    $list->setColumnParams("Funktion", ['func' => 'edit', 'id' => '###collection_id###']);
 
     $list->addColumn('delete', "Löschen", -1, ['', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnParams('delete', ['func' => 'delete', 'id' => '###collection.id###']);
+    $list->setColumnParams('delete', ['func' => 'delete', 'id' => '###collection_id###']);
     $list->addLinkAttribute('delete', 'onclick', "return confirm('Wirklich unwiderruflich löschen?');");
 
 
@@ -241,19 +248,19 @@ if ($func == '') {
     echo $sOutput;
 } ?>
 <script type="text/javascript">
-	$(document).on('rex:ready', function() {
-		$(function() {
-			$(".sortable-list tbody").sortable({
+    $(document).on('rex:ready', function() {
+        $(function() {
+            $(".sortable-list tbody").sortable({
                 handle: '.sort-handle',
-				opacity: 0.6,
-				cursor: 'move',
-				update: function() {
-					var order = $(this).sortable("serialize") + '&func=sort';
-					$.post("<?= rex_url::backendPage(rex_be_controller::getCurrentPage())?>", order,function(data) {
+                opacity: 0.6,
+                cursor: 'move',
+                update: function() {
+                    var order = $(this).sortable("serialize") + '&func=sort';
+                    $.post("<?= rex_url::backendPage(rex_be_controller::getCurrentPage()) ?>", order, function(data) {
                         $('#nvmsg').html(data);
                     });
-				}
-			});
-		});
-	});
+                }
+            });
+        });
+    });
 </script>

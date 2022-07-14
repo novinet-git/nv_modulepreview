@@ -2,9 +2,9 @@
 if (!rex::isBackend() or !rex::getUser()) {
     return;
 }
-if ($this->getConfig('generatefiles')) {
+if ($this->getConfig('run_update')) {
     nvModulepreview::generateCss();
-    $this->removeConfig('generatefiles');
+    $this->removeConfig('run_update');
 }
 
 if (file_exists($this->getAssetsPath("css/novinet.css"))) {
@@ -98,3 +98,17 @@ rex_extension::register('OUTPUT_FILTER', static function (rex_extension_point $e
 });
 
 rex_extension::register('MODULE_DELETED', array('nvModulepreview', 'clearModules'), rex_extension::LATE);
+
+/*
+rex_extension::register('PAGE_CHECKED', static function (rex_extension_point $ep) {
+
+
+    $page = rex_be_controller::getPageObject('nv_modulepreview');
+
+    $subpages = $page->getSubpages();
+
+    if (!$subpages) {
+        $page->setHidden(true);
+    }
+});
+*/

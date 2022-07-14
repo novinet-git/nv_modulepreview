@@ -20,6 +20,7 @@ nv_modulepreview_categories_status_inactive = Inaktiv
 nv_modulepreview_module_id = Modul ID
 nv_modulepreview_module_name = Modul Name
 nv_modulepreview_thumbnail = Vorschaubild
+nv_modulepreview_thumbnail_delete = Aktuelles Vorschaubild löschen
 nv_modulepreview_description = Beschreibung
 nv_modulepreview_module_edit = Modulvorschau bearbeiten
 
@@ -35,3 +36,5 @@ nv_modulepreview_modules_start_searching = Suchbegriff eingeben ...
 
 nv_modulepreview_mod_choose_modul = - Inhaltsblock wählen -
 nv_modulepreview_mod_copy_insertmodul = Inhaltsblock &raquo;###modname###&laquo; mit der ID ####modid### einfügen
+
+nv_modulepreview_presets = nvModulePresets

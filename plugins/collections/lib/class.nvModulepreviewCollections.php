@@ -13,10 +13,23 @@
         if (rex_be_controller::getCurrentPage() != "content/edit" or ($iSliceId && $iSliceId == $ep->getParam('slice_id') && ($sFunction == "add" or $sFunction == "edit"))) {
             return;
         }
+
+        $aModules = array();
+        $aModules[$ep->getParam("module_id")] = "modul";
+        $aModules = nvModulepreview::getAvailableModules($aModules,$ep->getParam('article_id'),$ep->getParam('clang'),$ep->getParam('ctype'));
+
+        if (!isset($aModules[$ep->getParam("module_id")])) {
+            return;
+        }
+
+        if (!rex::getUser()->hasPerm('nv_modulepreview_collections[]')) {
+            return;
+        }
+
         static::addButton($ep, [
             'hidden_label' => 'In collection speichern',
             'url' => rex_url::backendController([
-                'page' => 'modules/nv_modulepreview/collections/',
+                'page' => 'nv_modulepreview/collections/',
                 'func' => 'add',
                 'article_id' => $ep->getParam('article_id'),
                 'module_id' => $ep->getParam('module_id'),
@@ -40,7 +53,7 @@
         $ep->setSubject($items);
     }
 
-    public static function addCollectionsToMoudleSelect(rex_extension_point $ep)
+    public static function addCollectionsToModuleSelect(rex_extension_point $ep)
     {
         #$slice_id = static::getCookie('slice_id', 'int', null);
         #$clang = static::getCookie('clang', 'int', null);

@@ -1,16 +1,16 @@
 <?php class nvModulepreview
 {
 
-    private static function getAddon()
+    public static function getAddon()
     {
         return rex_addon::get('nv_modulepreview');
     }
 
     public static function runExtenstionPointGridblock($ep)
     {
-
         $aParams = $ep->getParams();
         $aModules = $aParams["allowedmodules"];
+        $aModules = self::getAvailableModules($aModules, $aParams["rexvars"]["artID"], $aParams["rexvars"]["clangID"], $aParams["rexvars"]["ctypeID"]);
 
         foreach ($aModules as $iKey => $aModule) {
             $aModules[$iKey]["gridblock"] = "active";
@@ -167,7 +167,9 @@
 
             $fileUrl = rex_url::addonAssets('nv_modulepreview', 'images/na.png');
             if ($sql->getValue('nv_modulepreview_thumbnail') !== '') {
-                $fileUrl = '/media/nv_modulepreview/' . $sql->getValue('nv_modulepreview_thumbnail');
+                #$fileUrl = '/media/nv_modulepreview/' . $sql->getValue('nv_modulepreview_thumbnail');
+                $fileUrl = rex_url::addonAssets('nv_modulepreview', 'images/thumbnails/' . $sql->getValue('nv_modulepreview_thumbnail'));
+
             }
             $thumbnail = '<img src=\'' . $fileUrl . '\' alt=\'Thumbnail ' . $sql->getValue('nv_modulepreview_thumbnail') . '\'>';
 
@@ -268,7 +270,8 @@
         $compiler->compile();
     }
 
-    public static function clearModules($ep) {
+    public static function clearModules($ep)
+    {
         $aParams = $ep->getParams();
         $iModulesId = $aParams["id"];
 
@@ -276,14 +279,94 @@
         $oDb->setQuery("SELECT * FROM " . rex::getTable("nv_modulepreview_categories") . " ORDER BY prio ASC");
         foreach ($oDb as $oItem) {
             $sModules = $oItem->getValue("modules");
-            $aModules = explode("|",substr($sModules,1,-1));
+            $aModules = explode("|", substr($sModules, 1, -1));
             $aNewModules = array();
-            foreach($aModules AS $iX => $iModuleId) {
+            foreach ($aModules as $iX => $iModuleId) {
                 $aNewModules[] = $iModuleId;
             }
-            $sModules = "|".implode("|",$aNewModules)."|";
+            $sModules = "|" . implode("|", $aNewModules) . "|";
             $oDb2 = rex_sql::factory();
-            $oDb2->setQuery("UPDATE " . rex::getTable("nv_modulepreview_categories") . " SET modules = :modules WHERE id = :id",["modules" => $sModules, "id" => $oItem->getValue("id")]);
+            $oDb2->setQuery("UPDATE " . rex::getTable("nv_modulepreview_categories") . " SET modules = :modules WHERE id = :id", ["modules" => $sModules, "id" => $oItem->getValue("id")]);
+        }
+    }
+
+    public static function getAvailableModules(?array $aModules, int $iArticleId, int $iClangId, int $iCtypeId)
+    {
+        #dump($aModules);
+        
+        $article = rex_sql::factory();
+        $article->setQuery('
+            SELECT article.*, template.attributes as template_attributes
+            FROM ' . rex::getTablePrefix() . 'article as article
+            LEFT JOIN ' . rex::getTablePrefix() . 'template as template ON template.id = article.template_id
+            WHERE article.id = ? AND clang_id = ?', [
+            $iArticleId,
+            $iClangId
+        ]);
+
+        $aTemplateAttributes = $article->getArrayValue('template_attributes');
+
+        $aTemplateCtypes = $aTemplateAttributes['ctype'] ?? [];
+        if (0 == count($aTemplateCtypes)) {
+            $aTemplateCtypes = [1 => 'default'];
+        }
+
+
+        $aNewModules = array();
+        foreach ($aModules as $iModuleId => $aModule) {
+            
+            if (!rex::getUser()->getComplexPerm('modules')->hasPerm($iModuleId)) {
+                continue;
+            }
+            if (!rex_template::hasModule($aTemplateAttributes, $iCtypeId, $iModuleId)) {
+                continue;
+            }
+            $aNewModules[$iModuleId] = $aModule;
+        }
+        #dump($aNewModules);
+        return $aNewModules;
+    }
+
+    public static function handleThumbnailUploads($ep)
+    {
+        $oAddon = self::getAddon();
+        $oSql = $ep->getParam("sql");
+        $oForm = $ep->getParam("form");
+
+        if ($oForm->isEditMode() == "edit") {
+            $iId = str_replace("id=", "", $oForm->getWhereCondition());
+        } else {
+            $iId = $oSql->getLastId();
+        }
+        $sFormname = $oForm->getName();
+
+        if ($_POST["thumbnail_current"] != "") {
+            $oDb = rex_sql::factory();
+            $oDb->setQuery("UPDATE " . rex::getTable("module") . " SET nv_modulepreview_thumbnail = :thumbnail WHERE id = :id", ["id" => $iId, "thumbnail" => $_POST["thumbnail_current"]]);
+        }
+
+        if ($_FILES[$sFormname]["tmp_name"]["nv_modulepreview_thumbnail"] != "" or $_POST["thumbnail_delete"] == "1") {
+            $oDb = rex_sql::factory();
+            $oDb->setQuery("SELECT * FROM " . rex::getTable("module") . " WHERE id = :id Limit 1", ["id" => $iId]);
+            if ($oDb->getValue("nv_modulepreview_thumbnail")) {
+                if (file_exists($oAddon->getAssetsPath("images/thumbnails/" . $oDb->getValue("nv_modulepreview_thumbnail")))) {
+                    unlink($oAddon->getAssetsPath("images/thumbnails/" . $oDb->getValue("nv_modulepreview_thumbnail")));
+                }
+                $oDb = rex_sql::factory();
+                $oDb->setQuery("UPDATE " . rex::getTable("module") . " SET nv_modulepreview_thumbnail = '' WHERE id = :id", ["id" => $iId]);
+            }
+        }
+        if ($_FILES[$sFormname]["tmp_name"]["nv_modulepreview_thumbnail"] != "") {
+            if (@is_array(getimagesize($_FILES[$sFormname]["tmp_name"]["nv_modulepreview_thumbnail"]))) {
+                $sExtension = preg_replace('@.+\.@', '', $_FILES[$sFormname]['name']["thumbnail"]);
+                $sThumbnail = $iId . "." . $sExtension;
+                move_uploaded_file($_FILES[$sFormname]["tmp_name"]["nv_modulepreview_thumbnail"], $oAddon->getAssetsPath("images/thumbnails/" . $sThumbnail));
+                $oDb = rex_sql::factory();
+                $oDb->setQuery("UPDATE " . rex::getTable("module") . " SET nv_modulepreview_thumbnail = :thumbnail WHERE id = :id", ["id" => $iId, "thumbnail" => $sThumbnail]);
+            } else {
+                $oDb = rex_sql::factory();
+                $oDb->setQuery("UPDATE " . rex::getTable("module") . " SET nv_modulepreview_thumbnail = '' WHERE id = :id", ["id" => $iId]);
+            }
         }
     }
 }

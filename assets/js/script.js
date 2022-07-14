@@ -1,4 +1,4 @@
-let $showModulePreview, slicePosition, slice, $modules, $modulePreview, $close, $modulesSearch, $body, $html, previewActive = false, moduleAdded = false, isGridblock = $collectionTabs = false;
+let $showModulePreview, slicePosition, slice, $modules, $modulePreview, $close, $modulesSearch, $body, $html, previewActive = false, moduleAdded = false, isGridblock = $modulePreviewTabs = false;
 
 $(document).on('rex:ready', function () {
 
@@ -104,8 +104,8 @@ function attachModuleEventHandler() {
     let offsetHeight = $( window ).outerHeight(); // höhe browserfenster
     let offsetScrollContainer = $('.nv-modal-header').outerHeight();
     let iHeight = offsetHeight-offsetScrollContainer;
-    if ($('#nv-collections-tabs').length) {
-      iHeight = iHeight-$('#nv-collections-tabs').outerHeight();
+    if ($('#nv-modulepreview-tabs').length) {
+      iHeight = iHeight-$('#nv-modulepreview-tabs').outerHeight();
     }
     iHeight = iHeight-105;
 
@@ -125,9 +125,9 @@ function attachModuleEventHandler() {
     $modulesSearch.focus();
 
 
-    $collectionTabs = $('#nv-collections-tabs li a');
-    if ($collectionTabs.length) {
-      $collectionTabs.on('click', function (event) {
+    $modulePreviewTabs = $('#nv-modulepreview-tabs li a');
+    if ($modulePreviewTabs.length) {
+      $modulePreviewTabs.on('click', function (event) {
           $modulesSearch.val('');
           searchModules();
           calcHeight();

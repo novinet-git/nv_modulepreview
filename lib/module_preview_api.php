@@ -4,27 +4,26 @@ class rex_api_module_preview_get_modules extends rex_api_function
 {
     public function execute()
     {
-        /*
-        $hideSearch = \rex_config::get('module_preview', 'hide_search');
-        $modulePreview = new module_preview();
-        $output = '';
-        if (!$hideSearch) {
-            $output .= $modulePreview->getSearch();
-        }
-        $output .= $modulePreview->getModules();
-*/
 
+        $articleId = rex_request('article_id', 'int');
+        $categoryId = rex_request('category_id', 'int');
+        $clang = rex_request('clang', 'int');
+        $ctype = rex_request('ctype', 'int');
 
         $moduleList = '';
 
         $moduleList .= '<!-- nv-modal-header start --><div class="nv-modal-header"><div class="nv-modal-header-label">' . rex_i18n::msg('nv_modulepreview_modules_choose') . '</div><div class="close"><span aria-hidden="true">&times;</span></div>';
 
-        $iCollections = false;
-        if (rex_plugin::get('nv_modulepreview', 'collections')->isAvailable()) {
-            $iCollections = count(nvModulepreviewCollections::getCollections());
-        }
+        $bEPShowSearch = false;
+        $bEPShowSearch = rex_extension::registerPoint(new rex_extension_point('NV_MODULEPREVIEW_SHOWSEARCH', $bEPShowSearch, [
+            'page' => rex_be_controller::getCurrentPage(),
+            'article_id' => $articleId,
+            'clang' => $clang,
+            'ctype' => $ctype,
+            'buster' => time()
+        ]));
 
-        if (rex_config::get('nv_modulepreview', 'show_search') && (!rex_config::get('nv_modulepreview', 'show_only_gridblock') or $iCollections)) {
+        if (rex_config::get('nv_modulepreview', 'show_search') && (!rex_config::get('nv_modulepreview', 'show_only_gridblock') or $bEPShowSearch)) {
             $moduleList .= '<div class="form-group">';
             $moduleList .= '<label class="control-label" for="module-preview-search"><input class="form-control" name="module-preview-search" type="text" id="module-preview-search" value="" placeholder="' . rex_i18n::msg('nv_modulepreview_modules_start_searching') . '" /></label>';
             $moduleList .= '</div>';
@@ -41,13 +40,10 @@ class rex_api_module_preview_get_modules extends rex_api_function
         $moduleList .= '<!-- tab-content start -->';
 
         $moduleList .= '<!-- tab-content-modules start -->';
-        $moduleList .= '<div role="tabpanel" class="tab-pane fade active in" id="nv-collections-tab-modules">';
+        $moduleList .= '<div role="tabpanel" class="tab-pane fade active in" id="nv-modulepreview-tab-modules">';
         $moduleList .= '<!-- nv-modale-list-modules start --><ul class="module-list">';
 
-        $articleId = rex_request('article_id', 'int');
-        $categoryId = rex_request('category_id', 'int');
-        $clang = rex_request('clang', 'int');
-        $ctype = rex_request('ctype', 'int');
+
 
         $context = new rex_context([
             'page' => rex_be_controller::getCurrentPage(),
@@ -88,11 +84,12 @@ class rex_api_module_preview_get_modules extends rex_api_function
 
         $module = rex_sql::factory();
         $aModules = array();
-        if (rex_config::get('nv_modulepreview', 'show_only_gridblock')) {
-            $modules = $module->getArray('select * from ' . rex::getTablePrefix() . 'module where name = "01 - Gridblock" order by name');
+        if (rex_config::get('nv_modulepreview', 'show_only_gridblock') && rex_addon::get('gridblock')->isAvailable()) {
+            $modules = rex_gridblock::getGridblockModules();
         } else {
             $modules = $module->getArray('select * from ' . rex::getTablePrefix() . 'module order by name');
         }
+
 
         foreach ($modules as $aItem) {
             $iId = $aItem["id"];
@@ -104,6 +101,7 @@ class rex_api_module_preview_get_modules extends rex_api_function
                 "context" => $context,
             );
         }
+        $aModules = nvModulepreview::getAvailableModules($aModules, $articleId, $clang, $ctype);
 
         $moduleList .= nvModulepreview::getPreview($aModules);
         $moduleList .= '</ul><!-- nv-modale-list-modules end -->';

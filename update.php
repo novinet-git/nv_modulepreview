@@ -1,1 +1,1 @@
-<?php $this->setConfig('generatefiles',true);
+<?php $this->setConfig('run_update',true);

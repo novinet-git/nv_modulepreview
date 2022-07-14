@@ -13,7 +13,7 @@ class rex_api_module_preview_get_modules_gridblock extends rex_api_function
         $aModules = $aSessionParams["modules"];
         $moduleList = '';
 
-        $moduleList .= '<div class="nv-fixed"><!-- nv-modal-header start --><div class="nv-modal-header"><div class="nv-modal-header-label">'.rex_i18n::msg('nv_modulepreview_modules_choose').'</div>';
+        $moduleList .= '<div class="nv-fixed"><!-- nv-modal-header start --><div class="nv-modal-header"><div class="nv-modal-header-label">'.rex_i18n::msg('nv_modulepreview_modules_choose').'</div><div class="close"><span aria-hidden="true">&times;</span></div>';
 
         if (rex_config::get('nv_modulepreview', 'show_search')) {
             $moduleList .= '<div class="form-group">';
@@ -23,6 +23,7 @@ class rex_api_module_preview_get_modules_gridblock extends rex_api_function
         
         $moduleList .= '</div><!-- nv-modal-header-end --></div>';
 
+        $moduleList .= '<div class="nv-scrollable-content-parent">';
         $moduleList .= '<div class="container nv-scrollable-content"><br />';
         $moduleList .= '<ul class="module-list gridblock-moduleselector" role="menu" data-colid="' . $aParams["colid"] . '" data-uid="' . $aParams["uid"] . '">';
 
@@ -48,6 +49,7 @@ class rex_api_module_preview_get_modules_gridblock extends rex_api_function
         $moduleList .= nvModulepreview::getPreview($aModules);
         $moduleList .= '</ul>';
         $moduleList .= '<br /></div>';
+        $moduleList .= '</div>';
 
         header('Content-Type: text/html; charset=UTF-8');
         echo $moduleList;
