@@ -166,7 +166,7 @@
             $sql->select();
 
             $fileUrl = rex_url::addonAssets('nv_modulepreview', 'images/na.png');
-            if ($sql->getValue('nv_modulepreview_thumbnail') !== '') {
+            if ($sql->getValue('nv_modulepreview_thumbnail') != '') {
                 #$fileUrl = '/media/nv_modulepreview/' . $sql->getValue('nv_modulepreview_thumbnail');
                 $fileUrl = rex_url::addonAssets('nv_modulepreview', 'images/thumbnails/' . $sql->getValue('nv_modulepreview_thumbnail'));
 
@@ -174,7 +174,7 @@
             $thumbnail = '<img src=\'' . $fileUrl . '\' alt=\'Thumbnail ' . $sql->getValue('nv_modulepreview_thumbnail') . '\'>';
 
             $description = '';
-            if ($sql->getValue('nv_modulepreview_description') !== '') {
+            if ($sql->getValue('nv_modulepreview_description') != '') {
                 $description = '<br /><br /><span class=\'text-muted\'><small>' . $sql->getValue('nv_modulepreview_description') . '</small></span>';
             }
 

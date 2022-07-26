@@ -4,6 +4,9 @@
 Changelog
 ---------
 
+<b>Version 1.6.1-beta</b>
+- Kleinen Bug bei nicht vorhandenen Bildern behoben
+
 <b>Version 1.6.0-beta</b>
 - Plugin nvModulePreview/collections entfernt. Bitte stattdessen Addon nvModulePresets verwenden
 
